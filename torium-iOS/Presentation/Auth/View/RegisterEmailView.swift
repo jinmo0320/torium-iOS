@@ -32,7 +32,7 @@ struct RegisterEmailView: View {
             .padding(.vertical, 20)
             .padding(.horizontal, 24)
             
-            //MARK: - body login fields
+            //MARK: - body email fields
             VStack(alignment: .leading, spacing: 16) {
                 InputFieldView(text: $email, placeholder: "이메일")
                 

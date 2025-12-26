@@ -12,17 +12,20 @@ struct InputFieldView: View {
     let placeholder: String
     let showAlert: Bool
     let secure: Bool
+    let disabled: Bool
 
     init(
         text: Binding<String>,
         placeholder: String,
         showAlert: Bool = false,
-        secure: Bool = false
+        secure: Bool = false,
+        disabled: Bool = false
     ) {
         self._text = text // Binding 연결 시 언더바(_) 사용
         self.placeholder = placeholder
         self.showAlert = showAlert
         self.secure = secure
+        self.disabled = disabled
     }
     
     var body: some View {
@@ -48,17 +51,24 @@ struct InputFieldView: View {
         .padding(.vertical, 20)
         .padding(.horizontal, 24)
         .font(.pretendard(.regular, size: 16))
-        .background(Color.clear)
+        .foregroundStyle(
+            disabled ? Color.labelPlaceholder :
+            showAlert ? Color.labelRed :
+            Color.labelPrimary
+        )
+        .background(disabled ? Color(hex: "#EDEDED") : Color.clear)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(showAlert ? Color.labelRed : Color.borderPrimary, lineWidth: 1)
         )
         .autocorrectionDisabled(true)
         .textInputAutocapitalization(.never)
+        .disabled(disabled)
     }
 }
 
 #Preview {
     @Previewable @State var text: String = ""
-    InputFieldView(text: $text, placeholder: "안녕", showAlert: false, secure: false)
+    InputFieldView(text: $text, placeholder: "안녕", showAlert: false, secure: false, disabled: true)
 }
