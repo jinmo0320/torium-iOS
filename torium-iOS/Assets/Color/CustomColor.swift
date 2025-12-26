@@ -10,13 +10,16 @@ import SwiftUI
 extension Color {
     static let brandPrimary = Color(hex: "#B869EC")
     
-    static let labelBlack = Color(hex: "#2B2B2B")
+    static let labelPrimary = Color(hex: "#2B2B2B")
     static let labelWhite = Color(hex: "#FFFFFF")
-    static let labelGray = Color(hex: "#999999")
     static let labelRed = Color(hex: "#D17878")
+    static let labelPlaceholder = Color(hex: "#999999")
+    static let labelDisabled = Color.labelWhite.opacity(0.6)
     
     static let buttonPrimary = Color(hex: "#3D3D3D")
     static let buttonDisabled = Color(hex: "#3C3C43").opacity(0.6)
+    
+    static let borderPrimary = Color(hex: "#B5B5B5")
 
 }
 

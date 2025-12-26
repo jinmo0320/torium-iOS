@@ -11,7 +11,7 @@ struct AuthMainView: View {
     var body: some View {
         VStack(spacing: 140) {
             Spacer()
-            
+            //MARK: - logo
             VStack(spacing: 30) {
                 Image(.toriumLogo)
                     .resizable()
@@ -23,7 +23,7 @@ struct AuthMainView: View {
                     .foregroundStyle(Color.brandPrimary)
                     .shadow(color: Color.black.opacity(0.15), radius: 4, x: 0, y: 4)
             }
-            
+            //MARK: - login buttons
             VStack(spacing: 10) {
                 Button {
                 } label: {
@@ -43,7 +43,7 @@ struct AuthMainView: View {
                 }
                 .padding(.vertical, 18)
                 .background(Color.buttonPrimary)
-                .cornerRadius(16)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 
                 Button {
                 } label: {
@@ -61,7 +61,7 @@ struct AuthMainView: View {
                 }
                 .padding(.vertical, 18)
                 .background(Color(hex: "#FEE500"))
-                .cornerRadius(16)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 
                 Button {
                 } label: {
@@ -78,7 +78,7 @@ struct AuthMainView: View {
                 }
                 .padding(.vertical, 18)
                 .background(Color(hex: "#F2F2F2"))
-                .cornerRadius(16)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
             }
         }
         .padding(.vertical, 40)
