@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		DA9383982EFDA1D30057DCB2 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = DA9383972EFDA1D30057DCB2 /* Alamofire */; };
+		DAA8280F2EFED52B00CEAFF5 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = DAA8280E2EFED52B00CEAFF5 /* Factory */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DA9383982EFDA1D30057DCB2 /* Alamofire in Frameworks */,
+				DAA8280F2EFED52B00CEAFF5 /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +86,7 @@
 			name = "torium-iOS";
 			packageProductDependencies = (
 				DA9383972EFDA1D30057DCB2 /* Alamofire */,
+				DAA8280E2EFED52B00CEAFF5 /* Factory */,
 			);
 			productName = "torium-iOS";
 			productReference = DA9383592EFD98630057DCB2 /* torium-iOS.app */;
@@ -115,6 +118,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				DA9383962EFDA1D30057DCB2 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				DAA8280D2EFED52B00CEAFF5 /* XCRemoteSwiftPackageReference "Factory" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DA93835A2EFD98630057DCB2 /* Products */;
@@ -366,6 +370,14 @@
 				minimumVersion = 5.11.0;
 			};
 		};
+		DAA8280D2EFED52B00CEAFF5 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -373,6 +385,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DA9383962EFDA1D30057DCB2 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		DAA8280E2EFED52B00CEAFF5 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DAA8280D2EFED52B00CEAFF5 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
