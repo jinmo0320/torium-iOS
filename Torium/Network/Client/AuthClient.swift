@@ -33,6 +33,9 @@ extension AuthClient: DependencyKey {
                         .request(
                             AuthRouter.login(email: email, password: password)
                         )
+                    
+                    _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
+                    _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
 
                     return User(
                         id: dto.user.id,
@@ -74,6 +77,9 @@ extension AuthClient: DependencyKey {
                                 password: password
                             )
                         )
+                    
+                    _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
+                    _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
 
                     return User(
                         id: dto.user.id,

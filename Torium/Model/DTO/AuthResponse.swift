@@ -22,5 +22,4 @@ nonisolated struct AuthResponseDTO: Decodable {
 nonisolated struct TokenResponseDTO: Codable {
     let accessToken: String
     let refreshToken: String
-
 }

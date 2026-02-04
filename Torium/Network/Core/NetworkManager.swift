@@ -20,7 +20,13 @@ final class NetworkManager {
     func request<T: Decodable>(_ router: URLRequestConvertible) async throws
         -> T
     {
-        let response = await session.request(router)
+        var interceptor: AuthInterceptor? = nil
+        
+        if let baseRouter = router as? Router, baseRouter.requiresAuth {
+            interceptor = AuthInterceptor.shared
+        }
+        
+        let response = await session.request(router, interceptor: interceptor)
             .validate()
             .serializingDecodable(T.self, emptyResponseCodes: [200, 204])
             .response
@@ -28,6 +34,7 @@ final class NetworkManager {
         switch response.result {
         case .success(let data):
             return data
+            
         case .failure(let error):
             if let data = response.data,
                let decodedError = try? JSONDecoder().decode(ErrorResponseDTO.self, from: data) {

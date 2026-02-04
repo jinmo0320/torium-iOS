@@ -4,8 +4,8 @@
 //
 //  Created by 최진모 on 1/4/25.
 
-import Foundation
 import Alamofire
+import Foundation
 
 enum AuthRouter: Router {
     case login(email: String, password: String)
@@ -16,18 +16,19 @@ enum AuthRouter: Router {
     case register(email: String, password: String)
     case resetPassword(email: String, newPassword: String)
     case refreshToken(refreshToken: String)
-    
+
     var baseURL: URL {
         return URL(string: NetworkConfiguration.localURL)!
     }
-    
+
     var method: HTTPMethod {
         switch self {
-        case .register, .login, .resetPassword, .sendEmail, .verifyEmail, .sendForgot, .verifyForgot, .refreshToken:
+        case .register, .login, .resetPassword, .sendEmail, .verifyEmail,
+            .sendForgot, .verifyForgot, .refreshToken:
             return .post
         }
     }
-    
+
     var path: String {
         switch self {
         case .login:
@@ -48,27 +49,29 @@ enum AuthRouter: Router {
             return "/auth/refresh-token"
         }
     }
-    
+
     var parameters: Parameters? {
         switch self {
-        case let .login(email, password):
+        case .login(let email, let password):
             return ["email": email, "password": password]
-        case let .sendEmail(email):
+        case .sendEmail(let email):
             return ["email": email]
-        case let .verifyEmail(email, code):
+        case .verifyEmail(let email, let code):
             return ["email": email, "code": code]
-        case let .sendForgot(email):
+        case .sendForgot(let email):
             return ["email": email]
-        case let .verifyForgot(email, code):
+        case .verifyForgot(let email, let code):
             return ["email": email, "code": code]
-        case let .register(email, password):
+        case .register(let email, let password):
             return ["email": email, "password": password]
-        case let .resetPassword(email, newPassword):
+        case .resetPassword(let email, let newPassword):
             return ["email": email, "newPassword": newPassword]
-        case let .refreshToken(token):
+        case .refreshToken(let token):
             return ["refreshToken": token]
         }
     }
+
+    var requiresAuth: Bool {
+        return false
+    }
 }
-
-
