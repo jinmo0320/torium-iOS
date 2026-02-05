@@ -17,7 +17,7 @@ struct SplashView: View {
             }
         }
         .onAppear {
-            store.send(.onAppear)
+            store.send(.autoLogin)
         }
     }
 }

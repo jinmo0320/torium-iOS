@@ -16,31 +16,39 @@ struct SplashFeature {
 
     enum Action {
         case onAppear
-        case loadingResponse(Result<Void, Error>)
+        case autoLogin
+        case autoLoginResponse(Result<User, Error>)
+        
+        case delegate(Delegate)
+        enum Delegate {
+            case goMain(User)
+            case goAuth
+        }
     }
 
     @Dependency(\.continuousClock) var clock
+    @Dependency(\.userClient) var userClient
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .onAppear:
+            case .autoLogin:
                 state.isLoading = true
                 return .run { send in
-                    try await clock.sleep(for: .seconds(5))
+                    try await clock.sleep(for: .seconds(3))
                     await send(
-                        .loadingResponse(.success(()))
+                        .autoLoginResponse(Result{ try await userClient.me() })
                     )
                 }
 
-            case .loadingResponse(.success):
+            case .autoLoginResponse(.success(let user)):
                 state.isLoading = false
-                return .none
+                return .send(.delegate(.goMain(user)))
 
-            case .loadingResponse(.failure(_)):
+            case .autoLoginResponse(.failure(_)):
                 state.isLoading = false
-                return .none
-                
+                return .send(.delegate(.goAuth))
+
             default:
                 return .none
             }
