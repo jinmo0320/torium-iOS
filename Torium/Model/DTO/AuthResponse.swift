@@ -6,13 +6,6 @@
 //
 import Foundation
 
-nonisolated struct UserResponseDTO: Decodable {
-    let id: UUID
-    let name: String
-    let tag: String
-    let email: String
-}
-
 nonisolated struct AuthResponseDTO: Decodable {
     let accessToken: String
     let refreshToken: String
@@ -22,5 +15,4 @@ nonisolated struct AuthResponseDTO: Decodable {
 nonisolated struct TokenResponseDTO: Codable {
     let accessToken: String
     let refreshToken: String
-
 }

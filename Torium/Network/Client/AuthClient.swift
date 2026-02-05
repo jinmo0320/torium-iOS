@@ -12,6 +12,8 @@ import Foundation
 struct AuthClient {
     var login:
         @Sendable (_ email: String, _ password: String) async throws -> User
+    var logout:
+        @Sendable () async -> Void
     var sendEmail: @Sendable (_ email: String) async throws -> Void
     var verifyEmail:
         @Sendable (_ email: String, _ code: String) async throws -> Void
@@ -33,6 +35,9 @@ extension AuthClient: DependencyKey {
                         .request(
                             AuthRouter.login(email: email, password: password)
                         )
+                    
+                    _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
+                    _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
 
                     return User(
                         id: dto.user.id,
@@ -43,6 +48,11 @@ extension AuthClient: DependencyKey {
                 } catch {
                     throw LoginError(from: error as! ErrorResponseDTO)
                 }
+            },
+            
+            logout: {
+                _ = await KeyChainManager.shared.deleteToken(type: .accessToken)
+                _ = await KeyChainManager.shared.deleteToken(type: .refreshToken)
             },
 
             sendEmail: { email in
@@ -74,6 +84,9 @@ extension AuthClient: DependencyKey {
                                 password: password
                             )
                         )
+                    
+                    _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
+                    _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
 
                     return User(
                         id: dto.user.id,

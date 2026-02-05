@@ -26,23 +26,21 @@ struct AuthFlow {
 
     @Reducer
     enum Destination {
-        case fullScreenFlow  // 커버 전체를 트리거할 케이스
+        case fullScreen
     }
-
+    
     @ObservableState
     struct State: Equatable {
+        var authMain = AuthMainFeature.State()
         var path = StackState<Path.State>()
         @Presents var destination: Destination.State?
-
-        var authMain = AuthMainFeature.State()
     }
 
     enum Action {
+        case authMain(AuthMainFeature.Action)
         case path(StackActionOf<Path>)
         case destination(PresentationAction<Destination.Action>)
-
-        case authMain(AuthMainFeature.Action)
-
+        
         case goBack
         case goRoot
     }
@@ -63,8 +61,8 @@ struct AuthFlow {
                 return .none
 
             case .authMain(.delegate(.goLocalLogin)):
+                state.destination = .fullScreen
                 state.path.removeAll()
-                state.destination = .fullScreenFlow
                 state.path.append(.login(LoginFeature.State()))
                 return .none
 

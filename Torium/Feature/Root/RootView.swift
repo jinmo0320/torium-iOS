@@ -12,14 +12,20 @@ struct RootView: View {
     let store: StoreOf<RootFeature>
 
     var body: some View {
-        // NavigationStack 없이 상태에 따라 뷰 자체를 교체
         Group {
             switch store.state {
+            case .splash:
+                SplashView(store: store.scope(state: \.splash, action: \.splash)!)
+                
             case .auth:
-                if let childStore = store.scope(state: \.auth, action: \.auth) {
-                    AuthFlowView(store: childStore)
-                }
+                AuthFlowView(store: store.scope(state: \.auth, action: \.auth)!)
+            
+            case .main:
+                MainFlowView(store: store.scope(state: \.main, action: \.main)!)
             }
+        }
+        .onAppear {
+            print("hi")
         }
         .animation(.default, value: store.state)
     }

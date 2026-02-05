@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension Color {
-    static let brandPrimary = Color(hex: "#B869EC")
+    static let brandPrimary = Color(hex: "#AA66AA")
     
     static let labelPrimary = Color(hex: "#2B2B2B")
     static let labelWhite = Color(hex: "#FFFFFF")

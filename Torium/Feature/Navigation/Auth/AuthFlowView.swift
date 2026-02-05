@@ -14,14 +14,15 @@ struct AuthFlowView: View {
     var body: some View {
         AuthMainView(
             store: store.scope(state: \.authMain, action: \.authMain)
-        ).fullScreenCover(
+        )
+        .fullScreenCover(
             item: $store.scope(state: \.destination, action: \.destination)
         ) { _ in
             NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
                 Color.clear
-            } destination: { store_ in
+            } destination: { storePath in
                 Group {
-                    switch store_.case {
+                    switch storePath.case {
                     case .login(let store):
                         LoginView(store: store)
                     case .registerEmail(let store):
