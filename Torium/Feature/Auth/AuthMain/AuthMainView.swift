@@ -12,29 +12,20 @@ struct AuthMainView: View {
     let store: StoreOf<AuthMainFeature>
 
     var body: some View {
-        VStack(spacing: 140) {
-            Spacer()
+        VStack(spacing: 0) {
             //MARK: - logo
-            VStack(spacing: 30) {
+            VStack(spacing: 40) {
+                Spacer()
+                
                 Image(.toriumLogo)
                     .resizable()
                     .frame(width: 150, height: 150)
-                    .shadow(
-                        color: Color.black.opacity(0.15),
-                        radius: 4,
-                        x: 0,
-                        y: 4
-                    )
 
                 Text("Torium")
-                    .font(.redHat(.heavy, size: 36))
+                    .font(.redHat(.bold, size: 32))
                     .foregroundStyle(Color.brandPrimary)
-                    .shadow(
-                        color: Color.black.opacity(0.15),
-                        radius: 4,
-                        x: 0,
-                        y: 4
-                    )
+                
+                Spacer()
             }
             //MARK: - login buttons
             VStack(spacing: 10) {
@@ -97,7 +88,6 @@ struct AuthMainView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 16))
             }
         }
-        .padding(.vertical, 40)
         .padding(.horizontal, 20)
         .navigationBarBackButtonHidden()
     }
