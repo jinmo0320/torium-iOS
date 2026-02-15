@@ -23,7 +23,7 @@ struct AuthMainView: View {
 
                 Text("Torium")
                     .font(.redHat(.bold, size: 32))
-                    .foregroundStyle(Color.brandPrimary)
+                    .foregroundStyle(Color.Brand)
                 
                 Spacer()
             }
@@ -47,7 +47,7 @@ struct AuthMainView: View {
                     }
                 }
                 .padding(.vertical, 18)
-                .background(Color.buttonPrimary)
+                .background(Color.BlackMidnight)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
 
                 Button {
@@ -89,6 +89,7 @@ struct AuthMainView: View {
             }
         }
         .padding(.horizontal, 20)
+        .background(Color.Background)
         .navigationBarBackButtonHidden()
     }
 }

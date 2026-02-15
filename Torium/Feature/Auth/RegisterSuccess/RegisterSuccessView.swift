@@ -16,19 +16,22 @@ struct RegisterSuccessView: View {
             VStack(spacing: 20) {
                 Text("회원가입이\n성공적으로 완료되었습니다!")
                     .font(.pretendard(.semibold, size: 20))
+                    .foregroundStyle(Color.BlackInk)
                     .multilineTextAlignment(.center)
                     .lineHeight(.loose)
+                
                 Image(systemName: "paperplane.fill")
                     .font(.system(size: 32))
-                    .foregroundStyle(Color.brandPrimary)
+                    .foregroundStyle(Color.Brand)
             }
             .padding(.horizontal, 15)
 
-            SubmitButtonView(text: "시작하기", loading: false, disabled: false) {
+            SubmitButtonView(text: "시작하기") {
                 store.send(.nextTapped)
             }
         }
         .fixedSize(horizontal: true, vertical: false)
+        .background(Color.Background)
         .navigationBarBackButtonHidden()
     }
 }

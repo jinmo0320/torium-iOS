@@ -27,20 +27,6 @@ extension Color {
     static let RedSoft = Color(hex: "#D17878")
     static let Cloud = Color(hex: "#F0EEE9")
     static let Soda = Color(hex: "#E5F7FF")
-    
-    static let brandPrimary = Color(hex: "#AA66AA")
-    static let labelPrimary = Color(hex: "#2B2B2B")
-    static let labelWhite = Color(hex: "#FFFFFF")
-    static let labelRed = Color(hex: "#D17878")
-    static let labelGreen = Color(hex: "#5FB88D")
-    static let labelPlaceholder = Color(hex: "#999999")
-    static let labelDisabled = Color.labelWhite.opacity(0.6)
-    
-    static let buttonPrimary = Color(hex: "#3D3D3D")
-    static let buttonDisabled = Color(hex: "#3C3C43").opacity(0.6)
-    
-    static let borderPrimary = Color(hex: "#B5B5B5")
-
 }
 
 extension Color {

@@ -49,19 +49,21 @@ struct AuthFlowView: View {
                             store.send(.goRoot)
                         } label: {
                             Image(systemName: "xmark")
-                                .resizable()
-                                .frame(width: 16, height: 16)
-                                .foregroundStyle(Color.labelPlaceholder)
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(Color.BlackSteel)
                         }
-                        .padding(6)
                         .background(
                             Circle()
-                                .fill(Color(hex: "787880").opacity(0.16))
+                                .fill(Color.BlackSoft)
+                                .frame(width: 40, height: 40)
                         )
                     }
                     .sharedBackgroundVisibility(.hidden)
                 }
                 .toolbarBackground(Color.orange, for: .navigationBar)
+                .onChange(of: store.path.count) {
+                    print(store.path.count)
+                }
             }
         }
     }

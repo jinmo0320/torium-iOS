@@ -20,12 +20,11 @@ struct ForgotSuccessView: View {
                     .lineHeight(.loose)
                 Image(systemName: "lock.badge.checkmark.fill")
                     .font(.system(size: 32))
-                    .foregroundStyle(Color.labelRed)
+                    .foregroundStyle(Color.RedSoft)
             }
             .padding(.horizontal, 15)
 
-            SubmitButtonView(text: "로그인하러 가기", loading: false, disabled: false)
-            {}
+            SubmitButtonView(text: "로그인하러 가기") {}
         }
         .fixedSize(horizontal: true, vertical: false)
         .navigationBarBackButtonHidden()
