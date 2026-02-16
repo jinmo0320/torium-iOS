@@ -12,27 +12,29 @@ struct RegisterSuccessView: View {
     let store: StoreOf<RegisterSuccessFeature>
 
     var body: some View {
-        VStack(spacing: 50) {
-            VStack(spacing: 20) {
-                Text("회원가입이\n성공적으로 완료되었습니다!")
-                    .font(.pretendard(.semibold, size: 20))
-                    .foregroundStyle(Color.BlackInk)
-                    .multilineTextAlignment(.center)
-                    .lineHeight(.loose)
-                
-                Image(systemName: "paperplane.fill")
-                    .font(.system(size: 32))
-                    .foregroundStyle(Color.Brand)
-            }
-            .padding(.horizontal, 15)
+        ZStack {
+            Color.Background.edgesIgnoringSafeArea(.all)
+            
+            VStack(spacing: 50) {
+                VStack(spacing: 20) {
+                    Text("회원가입이\n성공적으로 완료되었습니다!")
+                        .font(.pretendard(.semibold, size: 20))
+                        .foregroundStyle(Color.BlackInk)
+                        .multilineTextAlignment(.center)
+                        .lineHeight(.loose)
+                    
+                    Image(systemName: "paperplane.fill")
+                        .font(.system(size: 32))
+                        .foregroundStyle(Color.Brand)
+                }
+                .padding(.horizontal, 15)
 
-            SubmitButtonView(text: "시작하기") {
-                store.send(.nextTapped)
+                SubmitButtonView(text: "시작하기") {
+                    store.send(.nextTapped)
+                }
             }
+            .fixedSize(horizontal: true, vertical: false)
         }
-        .fixedSize(horizontal: true, vertical: false)
-        .background(Color.Background)
-        .navigationBarBackButtonHidden()
     }
 }
 

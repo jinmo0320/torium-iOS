@@ -71,6 +71,6 @@ struct AuthLayout: View {
                 .padding(.bottom, 25)
                 .padding(.horizontal, 20)
         }
-        .background(Color.Background)
+        .background(Color.clear)
     }
 }

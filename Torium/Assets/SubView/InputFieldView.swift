@@ -62,7 +62,7 @@ struct InputFieldView<Content: View>: View {
         .padding(.horizontal, 24)
         .font(.pretendard(.regular, size: 16))
         .foregroundStyle(alert ? Color.RedWarning : Color.BlackInk)
-        .underline(alert)
+        .underline(alert ? true : false)
         .background(Color.BlackSoft)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .autocorrectionDisabled(true)

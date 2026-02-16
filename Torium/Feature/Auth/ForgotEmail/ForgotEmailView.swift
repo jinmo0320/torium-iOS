@@ -14,20 +14,30 @@ struct ForgotEmailView: View {
     var body: some View {
         AuthLayout {
             Header("가입한 이메일을 입력해 주세요")
-            
-            InputFieldView(text: $store.email, placeholder: "이메일")
+
+            InputFieldView(
+                text: $store.email,
+                placeholder: "이메일",
+                alert: !store.isIncorrectEmailFormat
+            )
             EmptyView()
-            
+
             EmptyView()
-            if !store.isCorrectEmailFormat {
-                Text("\(Image(systemName: "exclamationmark.circle.fill")) 이메일 형식이 올바르지 않습니다!")
+            if !store.isIncorrectEmailFormat {
+                Text(
+                    "\(Image(systemName: "exclamationmark.circle.fill")) 이메일 형식이 올바르지 않습니다!"
+                )
             }
-            
-            SubmitButtonView(text: "다음") {
-                store.send(.nextTapped)
-            }
+
+            SubmitButtonView(
+                text: "다음",
+                type: store.isLoading ? .disabled : .primary
+            ) { store.send(.nextTapped) }
         }
-        .navigationBarBackButtonHidden()
+        .navbar(
+            back: { store.send(.delegate(.goBack)) },
+            root: { store.send(.delegate(.goRoot)) }
+        )
         .alert($store.scope(state: \.alert, action: \.alert))
     }
 }

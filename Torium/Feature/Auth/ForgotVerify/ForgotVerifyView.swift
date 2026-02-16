@@ -17,23 +17,41 @@ struct ForgotVerifyView: View {
 
             InputFieldView(
                 text: $store.code,
-                placeholder: "이메일",
+                placeholder: "인증번호",
                 inline: {
-                    Text("재발송")
-                        .font(.pretendard(.semibold, size: 15))
-                        .foregroundStyle(Color.Brand)
+                    Text(
+                        store.isLoading
+                            ? ""
+                            : store.isSuccessResend
+                                ? "\(Image(systemName: "checkmark"))" : "재발송"
+                    )
+                    .font(.pretendard(.semibold, size: 15))
+                    .foregroundStyle(Color.Brand)
+                    .onTapGesture {
+                        if !store.isLoading && !store.isSuccessResend {
+                            store.send(.resendTapped)
+                        }
+                    }
                 }
             )
             EmptyView()
 
             EmptyView()
-            Text("05:00")
+            Text(
+                store.isInvalidCode
+                    ? "\(Image(systemName: "exclamationmark.circle.fill")) 잘못된 인증번호입니다!"
+                    : "05:00"
+            )
 
-            SubmitButtonView(text: "다음") {
-                store.send(.nextTapped)
-            }
+            SubmitButtonView(
+                text: "다음",
+                type: store.isLoading ? .disabled : .primary
+            ) { store.send(.nextTapped) }
         }
-        .navigationBarBackButtonHidden()
+        .navbar(
+            back: { store.send(.delegate(.goBack)) },
+            root: { store.send(.delegate(.goRoot)) }
+        )
         .alert($store.scope(state: \.alert, action: \.alert))
     }
 }

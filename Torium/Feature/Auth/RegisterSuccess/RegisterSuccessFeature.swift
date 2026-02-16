@@ -17,6 +17,11 @@ struct RegisterSuccessFeature {
     enum Action {
         case nextTapped
         case nextResponse(Result<Void, Error>)
+        
+        case delegate(Delegate)
+        enum Delegate {
+            case goMain
+        }
     }
 
     var body: some Reducer<State, Action> {
@@ -27,10 +32,11 @@ struct RegisterSuccessFeature {
                 return .none
             case .nextResponse(.success):
                 state.isLoading = false
-                return .none
+                return .send(.delegate(.goMain))
             case .nextResponse(.failure(let error)):
                 state.isLoading = false
                 return .none
+            default: return .none
             }
         }
     }

@@ -14,19 +14,28 @@ struct LoginView: View {
     var body: some View {
         AuthLayout {
             Header("이메일로 로그인")
-            
+
             InputFieldView(text: $store.email, placeholder: "이메일")
-            InputFieldView(text: $store.password, placeholder: "비밀번호", secure: true)
-            
-            VStack (alignment: .leading, spacing: 16) {
+            InputFieldView(
+                text: $store.password,
+                placeholder: "비밀번호",
+                secure: true
+            )
+
+            VStack(alignment: .leading, spacing: 16) {
                 Text("계정이 없으신가요?").onTapGesture { store.send(.registerTapped) }
-                Text("비밀번호를 잊으셨나요?").onTapGesture { store.send(.forgotPasswordTapped) }
+                Text("비밀번호를 잊으셨나요?").onTapGesture {
+                    store.send(.forgotPasswordTapped)
+                }
             }
             EmptyView()
-            
-            SubmitButtonView(text: "다음") { store.send(.loginTapped) }
+
+            SubmitButtonView(
+                text: "다음",
+                type: store.isLoading ? .disabled : .primary
+            ) { store.send(.loginTapped) }
         }
-        .navigationBarBackButtonHidden()
+        .navbar(root: { store.send(.delegate(.goRoot)) })
         .alert($store.scope(state: \.alert, action: \.alert))
     }
 }

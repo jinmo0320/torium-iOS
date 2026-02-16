@@ -95,9 +95,11 @@ struct AuthFlow {
                     state.path.append(.registerSuccess(RegisterSuccessFeature.State()))
                     return .none
                     
-                // register password -> root
-                case .element(id: _, action: .registerPassword(.delegate(.goRoot))):
-                    return .send(.goRoot)
+                // register password -> login
+                case .element(id: _, action: .registerPassword(.delegate(.goLogin))):
+                    state.path.removeAll()
+                    state.path.append(.login(LoginFeature.State()))
+                    return .none
                     
                 // forgot send -> verify
                 case .element(id: _, action: .forgotEmail(.delegate(.goVerify(let email)))):
@@ -114,9 +116,11 @@ struct AuthFlow {
                     state.path.append(.forgotSuccess(ForgotSuccessFeature.State()))
                     return .none
                 
-                // forgot password -> root
-                case .element(id: _, action: .forgotPassword(.delegate(.goRoot))):
-                    return .send(.goRoot)
+                // forgot password -> login
+                case .element(id: _, action: .forgotPassword(.delegate(.goLogin))):
+                    state.path.removeAll()
+                    state.path.append(.login(LoginFeature.State()))
+                    return .none
 
                 default:
                     return .none
@@ -131,3 +135,13 @@ struct AuthFlow {
 
 }
 extension AuthFlow.Path.State: Equatable {}
+extension AuthFlow.Path.Action {
+    var isGoRoot: Bool {
+        switch self {
+        case .login(.delegate(.goRoot)):
+            return true
+        default:
+            return false
+        }
+    }
+}

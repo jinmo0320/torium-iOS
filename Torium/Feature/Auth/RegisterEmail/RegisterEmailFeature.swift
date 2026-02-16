@@ -12,12 +12,11 @@ import Foundation
 struct RegisterEmailFeature {
     @ObservableState
     struct State: Equatable {
-        @Presents var alert: AlertState<Action.Alert>?
-        
         var email: String = ""
         var isLoading: Bool = false
-        var isCorrectEmailFormat = true
+        var isIncorrectEmailFormat = true
         
+        @Presents var alert: AlertState<Action.Alert>?
     }
 
     enum Action: BindableAction {
@@ -26,14 +25,14 @@ struct RegisterEmailFeature {
         case nextResponse(Result<Void, Error>)
         case incorrectEmail
         
+        case alert(PresentationAction<Alert>)
+        enum Alert: Equatable {}
+        
         case delegate(Delegate)
         enum Delegate {
+            case goBack
+            case goRoot
             case goVerify(String)
-        }
-        
-        case alert(PresentationAction<Alert>)
-        enum Alert: Equatable {
-            case confirmTapped
         }
     }
 
@@ -44,7 +43,7 @@ struct RegisterEmailFeature {
         Reduce { state, action in
             switch action {
             case .binding(\.email):
-                state.isCorrectEmailFormat = true
+                state.isIncorrectEmailFormat = true
                 return .none
                 
             case .binding:
@@ -82,7 +81,7 @@ struct RegisterEmailFeature {
                 
             case .incorrectEmail:
                 state.isLoading = false
-                state.isCorrectEmailFormat = false
+                state.isIncorrectEmailFormat = false
                 return .none
                 
             default: return .none
