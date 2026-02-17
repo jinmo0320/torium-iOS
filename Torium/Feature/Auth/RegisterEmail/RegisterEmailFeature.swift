@@ -14,7 +14,7 @@ struct RegisterEmailFeature {
     struct State: Equatable {
         var email: String = ""
         var isLoading: Bool = false
-        var isIncorrectEmailFormat = true
+        var isIncorrectEmailFormat = false
         
         @Presents var alert: AlertState<Action.Alert>?
     }
@@ -43,7 +43,7 @@ struct RegisterEmailFeature {
         Reduce { state, action in
             switch action {
             case .binding(\.email):
-                state.isIncorrectEmailFormat = true
+                state.isIncorrectEmailFormat = false
                 return .none
                 
             case .binding:
@@ -81,7 +81,7 @@ struct RegisterEmailFeature {
                 
             case .incorrectEmail:
                 state.isLoading = false
-                state.isIncorrectEmailFormat = false
+                state.isIncorrectEmailFormat = true
                 return .none
                 
             default: return .none

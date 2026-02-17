@@ -18,12 +18,12 @@ struct ForgotEmailView: View {
             InputFieldView(
                 text: $store.email,
                 placeholder: "이메일",
-                alert: !store.isIncorrectEmailFormat
+                alert: store.isIncorrectEmailFormat
             )
             EmptyView()
 
             EmptyView()
-            if !store.isIncorrectEmailFormat {
+            if store.isIncorrectEmailFormat {
                 Text(
                     "\(Image(systemName: "exclamationmark.circle.fill")) 이메일 형식이 올바르지 않습니다!"
                 )

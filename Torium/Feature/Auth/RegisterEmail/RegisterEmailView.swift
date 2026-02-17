@@ -18,7 +18,7 @@ struct RegisterEmailView: View {
             InputFieldView(
                 text: $store.email,
                 placeholder: "이메일",
-                alert: !store.isIncorrectEmailFormat
+                alert: store.isIncorrectEmailFormat
             )
             EmptyView()
 

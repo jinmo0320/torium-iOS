@@ -121,6 +121,20 @@ struct AuthFlow {
                     state.path.removeAll()
                     state.path.append(.login(LoginFeature.State()))
                     return .none
+                    
+                // 공통 goRoot 처리
+                case .element(id: _, action: let action) where action.isGoRoot:
+                    return .send(.goRoot)
+                
+                // 공통 goBack 처리
+                case .element(id: _, action: let action) where action.isGoBack:
+                    return .send(.goBack)
+                    
+                // 공통 goBack 특수 케이스 처리
+                case .element(id: _, action: let action) where action.isGoInit:
+                    state.path.removeAll()
+                    state.path.append(.login(LoginFeature.State()))
+                    return .none
 
                 default:
                     return .none
@@ -138,7 +152,33 @@ extension AuthFlow.Path.State: Equatable {}
 extension AuthFlow.Path.Action {
     var isGoRoot: Bool {
         switch self {
-        case .login(.delegate(.goRoot)):
+        case .login(.delegate(.goRoot)),
+             .registerEmail(.delegate(.goRoot)),
+             .registerVerify(.delegate(.goRoot)),
+             .registerPassword(.delegate(.goRoot)),
+             .forgotEmail(.delegate(.goRoot)),
+             .forgotVerify(.delegate(.goRoot)),
+             .forgotPassword(.delegate(.goRoot)):
+            return true
+        default:
+            return false
+        }
+    }
+    var isGoBack: Bool {
+        switch self {
+        case .registerEmail(.delegate(.goBack)),
+             .registerVerify(.delegate(.goBack)),
+             .forgotEmail(.delegate(.goBack)),
+             .forgotVerify(.delegate(.goBack)):
+            return true
+        default:
+            return false
+        }
+    }
+    var isGoInit: Bool {
+        switch self {
+        case .registerPassword(.delegate(.goBack)),
+             .forgotPassword(.delegate(.goBack)):
             return true
         default:
             return false
