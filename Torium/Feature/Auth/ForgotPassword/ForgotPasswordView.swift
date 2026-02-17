@@ -12,84 +12,63 @@ struct ForgotPasswordView: View {
     @Bindable var store: StoreOf<ForgotPasswordFeature>
 
     var body: some View {
-        VStack(spacing: 0) {
-            //MARK: - header title
-            HStack {
-                Text("비밀번호를 재설정해 주세요.")
-                    .font(.pretendard(.semibold, size: 24))
-                    .foregroundStyle(Color.labelPrimary)
-                Spacer()
-            }
-            .padding(.vertical, 20)
-            .padding(.horizontal, 24)
+        AuthLayout {
+            Header("비밀번호를 재설정해 주새요")
 
-            //MARK: - body register fields
-            VStack(alignment: .leading, spacing: 16) {
-                InputFieldView(text: $store.password, placeholder: "새 비밀번호", secure: true)
-                InputFieldView(text: $store.passwordRepeat, placeholder: "새 비밀번호 확인", secure: true)
-
-                VStack(alignment: .leading, spacing: 8) {
-                    if !store.isCorretPasswordFormat {
-                        Text("비밀번호 형식이 올바르지 않습니다!")
-                            .font(.pretendard(.regular, size: 15))
-                            .foregroundStyle(Color.labelRed)
-
-                        Text(
-                            "\(Image(systemName: store.pwdFormat.alphabet ? "checkmark.circle.fill" : "xmark.circle")) 알파벳"
-                        )
-                        .font(.pretendard(.regular, size: 15))
-                        .foregroundStyle(
-                            store.pwdFormat.alphabet
-                                ? Color.labelGreen : Color.labelRed
-                        )
-
-                        Text(
-                            "\(Image(systemName: store.pwdFormat.number ? "checkmark.circle.fill" : "xmark.circle")) 숫자"
-                        )
-                        .font(.pretendard(.regular, size: 15))
-                        .foregroundStyle(
-                            store.pwdFormat.number
-                                ? Color.labelGreen : Color.labelRed
-                        )
-
-                        Text(
-                            "\(Image(systemName: store.pwdFormat.specialCharacter ? "checkmark.circle.fill" : "xmark.circle")) 특수문자(!@#$%^&*?~)"
-                        )
-                        .font(.pretendard(.regular, size: 15))
-                        .foregroundStyle(
-                            store.pwdFormat.specialCharacter
-                                ? Color.labelGreen : Color.labelRed
-                        )
-
-                        Text(
-                            "\(Image(systemName: store.pwdFormat.length ? "checkmark.circle.fill" : "xmark.circle")) 8자 이상"
-                        )
-                        .font(.pretendard(.regular, size: 15))
-                        .foregroundStyle(
-                            store.pwdFormat.length
-                                ? Color.labelGreen : Color.labelRed
-                        )
-                    }
-                    else if !store.isPasswordMatch {
-                        Text("비밀번호가 일치하지 않습니다.")
-                            .font(.pretendard(.regular, size: 15))
-                            .foregroundStyle(Color.labelRed)
+            InputFieldView(
+                text: $store.password,
+                placeholder: "비밀번호",
+                secure: true,
+                inline: {
+                    if store.password.count < 8 {
+                        Text("\(store.password.count)/8")
+                            .font(.pretendard(.semibold, size: 15))
+                            .foregroundStyle(Color.BlackPlaceholder)
                     }
                 }
-                .padding(.horizontal, 10)
-            }
-            .padding(20)
+            )
 
-            Spacer()
+            InputFieldView(
+                text: $store.passwordRepeat,
+                placeholder: "비밀번호 확인",
+                secure: true
+            )
 
-            //MARK: - footer button
-            SubmitButtonView(text: "다음", loading: false, disabled: false) {
-                store.send(.nextTapped)
+            EmptyView()
+            VStack(alignment: .leading, spacing: 8) {
+                if store.isIncorretPasswordFormat {
+                    Text(
+                        "\(Image(systemName: "exclamationmark.circle.fill")) 비밀번호 형식이 올바르지 않습니다!"
+                    )
+                    if !store.pwdFormat.alphabet {
+                        Text("\(Image(systemName: "x.circle")) 알파벳")
+                    }
+                    if !store.pwdFormat.number {
+                        Text("\(Image(systemName: "x.circle")) 숫자")
+                    }
+                    if !store.pwdFormat.specialCharacter {
+                        Text("\(Image(systemName: "x.circle")) 특수문자(!@#$%^&*?~...)")
+                    }
+                    if !store.pwdFormat.length {
+                        Text("\(Image(systemName: "x.circle")) 8자 이상")
+                    }
+
+                } else if store.isPasswordMismatch {
+                    Text(
+                        "\(Image(systemName: "exclamationmark.circle.fill")) 비밀번호가 일치하지 않습니다!"
+                    )
+                }
             }
-            .padding(.vertical, 15)
-            .padding(.horizontal, 20)
+
+            SubmitButtonView(
+                text: "다음",
+                type: store.isLoading ? .disabled : .primary
+            ) { store.send(.nextTapped) }
         }
-        .navigationBarBackButtonHidden()
+        .navbar(
+            back: { store.send(.delegate(.goBack)) },
+            root: { store.send(.delegate(.goRoot)) }
+        )
         .alert($store.scope(state: \.alert, action: \.alert))
     }
 }

@@ -12,11 +12,11 @@ import Foundation
 struct LoginFeature {
     @ObservableState
     struct State: Equatable {
-        @Presents var alert: AlertState<Action.Alert>?
-
         var email: String = ""
         var password: String = ""
         var isLoading: Bool = false
+        
+        @Presents var alert: AlertState<Action.Alert>?
     }
 
     enum Action: BindableAction {
@@ -27,15 +27,15 @@ struct LoginFeature {
         case registerTapped
         case forgotPasswordTapped
 
+        case alert(PresentationAction<Alert>)
+        enum Alert: Equatable {}
+        
         case delegate(Delegate)
         enum Delegate {
+            case goRoot
+            case goMain
             case goRegister
             case goForgotpassword
-        }
-
-        case alert(PresentationAction<Alert>)
-        enum Alert: Equatable {
-            case confirmTapped
         }
     }
 
@@ -63,7 +63,7 @@ struct LoginFeature {
 
             case .loginResponse(.success(_)):
                 state.isLoading = false
-                return .none
+                return .send(.delegate(.goMain))
 
             case .loginResponse(.failure(let error)):
                 state.isLoading = false
@@ -74,7 +74,6 @@ struct LoginFeature {
                 } message: {
                     TextState(error.localizedDescription)
                 }
-
                 return .none
 
             case .registerTapped:

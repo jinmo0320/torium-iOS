@@ -23,45 +23,27 @@ struct AuthFlowView: View {
             } destination: { storePath in
                 Group {
                     switch storePath.case {
-                    case .login(let store):
-                        LoginView(store: store)
-                    case .registerEmail(let store):
-                        RegisterEmailView(store: store)
-                    case .registerVerify(let store):
-                        RegisterVerifyView(store: store)
-                    case .registerPassword(let store):
-                        RegisterPasswordView(store: store)
-                    case .registerSuccess(let store):
-                        RegisterSuccessView(store: store)
-                    case .forgotEmail(let store):
-                        ForgotEmailView(store: store)
-                    case .forgotVerify(let store):
-                        ForgotVerifyView(store: store)
-                    case .forgotPassword(let store):
-                        ForgotPasswordView(store: store)
-                    case .forgotSuccess(let store):
-                        ForgotSuccessView(store: store)
+                    case .login(let s):
+                        LoginView(store: s)
+                    case .registerEmail(let s):
+                        RegisterEmailView(store: s)
+                    case .registerVerify(let s):
+                        RegisterVerifyView(store: s)
+                    case .registerPassword(let s):
+                        RegisterPasswordView(store: s)
+                    case .registerSuccess(let s):
+                        RegisterSuccessView(store: s)
+                    case .forgotEmail(let s):
+                        ForgotEmailView(store: s)
+                    case .forgotVerify(let s):
+                        ForgotVerifyView(store: s)
+                    case .forgotPassword(let s):
+                        ForgotPasswordView(store: s)
+                    case .forgotSuccess(let s):
+                        ForgotSuccessView(store: s)
                     }
                 }
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            store.send(.goRoot)
-                        } label: {
-                            Image(systemName: "xmark")
-                                .resizable()
-                                .frame(width: 16, height: 16)
-                                .foregroundStyle(Color.labelPlaceholder)
-                        }
-                        .padding(6)
-                        .background(
-                            Circle()
-                                .fill(Color(hex: "787880").opacity(0.16))
-                        )
-                    }
-                    .sharedBackgroundVisibility(.hidden)
-                }
-                .toolbarBackground(Color.orange, for: .navigationBar)
+                .background(Color.Background)
             }
         }
     }

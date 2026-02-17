@@ -12,48 +12,46 @@ struct ForgotVerifyView: View {
     @Bindable var store: StoreOf<ForgotVerifyFeature>
 
     var body: some View {
-        VStack(spacing: 0) {
-            //MARK: - header title
-            HStack {
-                Text("인증을 완료해 주세요.")
-                    .font(.pretendard(.semibold, size: 24))
-                    .foregroundStyle(Color.labelPrimary)
-                Spacer()
-            }
-            .padding(.vertical, 20)
-            .padding(.horizontal, 24)
+        AuthLayout {
+            Header("인증을 완료해 주세요")
 
-            //MARK: - body verification fields
-            VStack(alignment: .leading, spacing: 16) {
-                InputFieldView(text: $store.email, placeholder: "이메일", disabled: true)
-                InputFieldView(text: $store.code, placeholder: "인증코드 6자리")
-                    .keyboardType(.numberPad)
-
-                VStack(alignment: .leading, spacing: 16) {
-                    if store.isInvalidCode {
-                        Text("잘못된 인증코드입니다!")
-                            .font(.pretendard(.regular, size: 15))
-                            .foregroundStyle(Color.labelRed)
+            InputFieldView(
+                text: $store.code,
+                placeholder: "인증번호",
+                inline: {
+                    Text(
+                        store.isLoading
+                            ? ""
+                            : store.isSuccessResend
+                                ? "\(Image(systemName: "checkmark"))" : "재발송"
+                    )
+                    .font(.pretendard(.semibold, size: 15))
+                    .foregroundStyle(Color.Brand)
+                    .onTapGesture {
+                        if !store.isLoading && !store.isSuccessResend {
+                            store.send(.resendTapped)
+                        }
                     }
-
-                    Text("남은 시간 05:00")
-                        .font(.pretendard(.regular, size: 15))
-                        .foregroundStyle(Color.labelRed).opacity(store.isInvalidCode ? 0.5 : 1)
                 }
-                .padding(.horizontal, 10)
-            }
-            .padding(20)
+            )
+            EmptyView()
 
-            Spacer()
+            EmptyView()
+            Text(
+                store.isInvalidCode
+                    ? "\(Image(systemName: "exclamationmark.circle.fill")) 잘못된 인증번호입니다!"
+                    : "05:00"
+            )
 
-            //MARK: - footer button
-            SubmitButtonView(text: "다음", loading: false, disabled: false) {
-                store.send(.nextTapped)
-            }
-            .padding(.vertical, 15)
-            .padding(.horizontal, 20)
+            SubmitButtonView(
+                text: "다음",
+                type: store.isLoading ? .disabled : .primary
+            ) { store.send(.nextTapped) }
         }
-        .navigationBarBackButtonHidden()
+        .navbar(
+            back: { store.send(.delegate(.goBack)) },
+            root: { store.send(.delegate(.goRoot)) }
+        )
         .alert($store.scope(state: \.alert, action: \.alert))
     }
 }
