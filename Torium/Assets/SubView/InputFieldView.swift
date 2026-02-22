@@ -14,6 +14,8 @@ struct InputFieldView<Content: View>: View {
     let alert: Bool
     let inline: () -> Content
     
+    @State private var isPwdVisible: Bool = false
+    
     init(
         text: Binding<String>,
         placeholder: String,
@@ -32,15 +34,46 @@ struct InputFieldView<Content: View>: View {
         Group {
             if secure {
                 HStack {
-                    SecureField (
-                        "",
-                        text: $text,
-                        prompt: Text(placeholder)
-                            .font(.pretendard(.regular, size: 16))
-                            .foregroundStyle(Color.BlackPlaceholder)
-                            .underline(false)
-                    )
+                    if !isPwdVisible {
+                        SecureField (
+                            "",
+                            text: $text,
+                            prompt: Text(placeholder)
+                                .font(.pretendard(.regular, size: 16))
+                                .foregroundStyle(Color.BlackPlaceholder)
+                                .underline(false)
+                        )
+                    } else {
+                        TextField (
+                            "",
+                            text: $text,
+                            prompt: Text(placeholder)
+                                .font(.pretendard(.regular, size: 16))
+                                .foregroundStyle(Color.BlackPlaceholder)
+                                .underline(false)
+                        )
+                    }
+
                     Spacer()
+                    
+                    if !isPwdVisible {
+                        Button {
+                            isPwdVisible = true
+                        } label: {
+                            Image(systemName: "eye.slash")
+                                .font(.pretendard(.semibold, size: 12))
+                                .foregroundStyle(Color.BlackSteel)
+                        }
+                    } else {
+                        Button {
+                            isPwdVisible = false
+                        } label: {
+                            Image(systemName: "eye")
+                                .font(.pretendard(.semibold, size: 12))
+                                .foregroundStyle(Color.BlackSteel)
+                        }
+                    }
+                    
                     inline()
                         .underline(false)
                 }
@@ -56,6 +89,17 @@ struct InputFieldView<Content: View>: View {
                     )
                     
                     Spacer()
+                    
+                    if !text.isEmpty {
+                        Button {
+                            text = ""
+                        } label: {
+                            Image(systemName: "xmark")
+                                .font(.pretendard(.semibold, size: 12))
+                                .foregroundStyle(Color.BlackSteel)
+                        }
+                    }
+                    
                     inline()
                         .underline(false)
                 }
