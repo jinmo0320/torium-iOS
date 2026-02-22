@@ -11,39 +11,29 @@ import Foundation
 
 struct UserClient {
     var me: @Sendable () async throws -> User
-    var changePassword: @Sendable (_ oldPassword: String, _ newPassword: String) async throws -> Void
+    var changePassword: @Sendable (String, String) async throws -> Void
 }
 
 extension UserClient: DependencyKey {
     static var liveValue: Self {
         return Self(
             me: {
-                do {
-                    let dto: UserResponseDTO = try await NetworkManager.shared.request(UserRouter.me)
-                    
-                    return User(
-                        id: dto.id,
-                        name: dto.name,
-                        tag: dto.tag,
-                        email: dto.email
-                    )
-                } catch {
-                    throw UserError(from: error as! ErrorResponseDTO)
-                }
+                let dto: UserDTO = try await Network.shared.request(UserRouter.me)
+                return User(
+                    id: dto.id,
+                    name: dto.name,
+                    tag: dto.tag,
+                    email: dto.email
+                )
             },
             
             changePassword: { oldPassword, newPassword in
-                do {
-                    let _: Empty = try await NetworkManager.shared.request(
-                        UserRouter.changePassword(
-                            oldPassword: oldPassword,
-                            newPassword: newPassword
-                        )
+                let _: Empty = try await Network.shared.request(
+                    UserRouter.changePassword(
+                        oldPassword: oldPassword,
+                        newPassword: newPassword
                     )
-                    
-                } catch {
-                    throw ChangePasswordError(from: error as! ErrorResponseDTO)
-                }
+                )
             }
         )
     }

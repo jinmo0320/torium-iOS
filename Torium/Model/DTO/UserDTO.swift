@@ -6,7 +6,7 @@
 //
 import Foundation
 
-nonisolated struct UserResponseDTO: Decodable {
+nonisolated struct UserDTO: Decodable {
     let id: UUID
     let name: String
     let tag: String

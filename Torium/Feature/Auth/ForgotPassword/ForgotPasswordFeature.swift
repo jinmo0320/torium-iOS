@@ -99,7 +99,7 @@ struct ForgotPasswordFeature {
                 state.isLoading = false
                 return .send(.delegate(.goSuccess))
 
-            case .nextResponse(.failure(let error as ForgotPasswordError))
+            case .nextResponse(.failure(let error as SetPasswordError))
             where error == .emailNotVerified:
                 state.isLoading = false
                 state.alert = AlertState {

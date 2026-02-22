@@ -46,7 +46,7 @@ enum AuthRouter: Router {
         case .resetPassword:
             return "/auth/reset-password"
         case .refreshToken:
-            return "/auth/refresh-token"
+            return "/auth/refresh"
         }
     }
 
@@ -73,5 +73,38 @@ enum AuthRouter: Router {
 
     var requiresAuth: Bool {
         return false
+    }
+}
+
+extension AuthRouter {
+    var errorMap: ErrorMapper? {
+        switch self {
+        case .login:
+            return ErrorMapper {
+                ErrorCode.WRONG_EMAIL_FORMAT ~> LoginError.loginFailed
+                ErrorCode.WRONG_PASSWORD_FORMAT ~> LoginError.loginFailed
+                ErrorCode.LOGIN_FAILED ~> LoginError.loginFailed
+            }
+        case .sendEmail:
+            return ErrorMapper {
+                ErrorCode.EMAIL_ALREADY_REGISTERED ~> RegisterEmailError.emailAlreadyRegistered
+            }
+        case .sendForgot:
+            return ErrorMapper {
+                ErrorCode.EMAIL_NOT_REGISTERED ~> ForgotEmailError.emailNotRegistered
+            }
+        case .verifyEmail, .verifyForgot:
+            return ErrorMapper {
+                ErrorCode.EMAIL_VERIFICATION_FAILED ~> VerificationError.verificationFailed
+            }
+        case .register, .resetPassword:
+            return ErrorMapper {
+                ErrorCode.EMAIL_NOT_VERIFIED ~> SetPasswordError.emailNotVerified
+            }
+        case .refreshToken:
+            return ErrorMapper {
+                ErrorCode.TOKEN_INVALID ~> AppError.unauthorized
+            }
+        }
     }
 }

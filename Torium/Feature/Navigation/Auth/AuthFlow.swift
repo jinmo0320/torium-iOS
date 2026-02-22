@@ -81,8 +81,8 @@ struct AuthFlow {
                     return .none
                     
                 // register send -> verify
-                case .element(id: _, action: .registerEmail(.delegate(.goVerify(let email)))):
-                    state.path.append(.registerVerify(RegisterVerifyFeature.State(email: email)))
+                case .element(id: _, action: .registerEmail(.delegate(.goVerify(let email, let expiredAt)))):
+                    state.path.append(.registerVerify(RegisterVerifyFeature.State(email: email, expiredAt: expiredAt)))
                     return .none
                 
                 // register verify -> password
@@ -102,8 +102,8 @@ struct AuthFlow {
                     return .none
                     
                 // forgot send -> verify
-                case .element(id: _, action: .forgotEmail(.delegate(.goVerify(let email)))):
-                    state.path.append(.forgotVerify(ForgotVerifyFeature.State(email: email)))
+                case .element(id: _, action: .forgotEmail(.delegate(.goVerify(let email, let expiredAt)))):
+                    state.path.append(.forgotVerify(ForgotVerifyFeature.State(email: email, expiredAt: expiredAt)))
                     return .none
                     
                 // forgot verify -> password

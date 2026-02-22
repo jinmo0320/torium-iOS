@@ -19,6 +19,7 @@ struct ForgotPasswordView: View {
                 text: $store.password,
                 placeholder: "비밀번호",
                 secure: true,
+                alert: store.isIncorretPasswordFormat,
                 inline: {
                     if store.password.count < 8 {
                         Text("\(store.password.count)/8")
@@ -31,7 +32,8 @@ struct ForgotPasswordView: View {
             InputFieldView(
                 text: $store.passwordRepeat,
                 placeholder: "비밀번호 확인",
-                secure: true
+                secure: true,
+                alert: store.isPasswordMismatch
             )
 
             EmptyView()

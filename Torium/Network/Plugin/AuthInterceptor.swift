@@ -39,7 +39,7 @@ final class AuthInterceptor: RequestInterceptor {
                     return
                 }
 
-                let dto: TokenResponseDTO = try await NetworkManager.shared.request(AuthRouter.refreshToken(refreshToken: refreshToken))
+                let dto: TokenDTO = try await Network.shared.request(AuthRouter.refreshToken(refreshToken: refreshToken))
             
                 _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
                 _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)

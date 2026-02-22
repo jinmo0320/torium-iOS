@@ -99,8 +99,8 @@ struct RegisterPasswordFeature {
                 state.isLoading = false
                 return .send(.delegate(.goSuccess))
 
-            case .nextResponse(.failure(let error as RegisterPasswordError))
-            where error == .emailAlreadyRegistered || error == .emailNotVerified:
+            case .nextResponse(.failure(let error as SetPasswordError))
+            where error == .emailNotVerified:
                 state.isLoading = false
                 state.alert = AlertState {
                     TextState("회원가입 실패")

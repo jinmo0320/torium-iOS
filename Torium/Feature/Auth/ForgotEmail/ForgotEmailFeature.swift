@@ -22,7 +22,7 @@ struct ForgotEmailFeature {
     enum Action: BindableAction {
         case binding(BindingAction<State>)
         case nextTapped
-        case nextResponse(Result<Void, Error>)
+        case nextResponse(Result<Date, Error>)
         case incorrectEmail
         
         case alert(PresentationAction<Alert>)
@@ -32,7 +32,7 @@ struct ForgotEmailFeature {
         enum Delegate {
             case goBack
             case goRoot
-            case goVerify(String)
+            case goVerify(String, Date)
         }
     }
 
@@ -64,9 +64,9 @@ struct ForgotEmailFeature {
                     )
                 }
                 
-            case .nextResponse(.success):
+            case .nextResponse(.success(let expiredAt)):
                 state.isLoading = false
-                return .send(.delegate(.goVerify(state.email)))
+                return .send(.delegate(.goVerify(state.email, expiredAt)))
                 
             case .nextResponse(.failure(let error)):
                 state.isLoading = false

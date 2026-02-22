@@ -38,9 +38,11 @@ struct InputFieldView<Content: View>: View {
                         prompt: Text(placeholder)
                             .font(.pretendard(.regular, size: 16))
                             .foregroundStyle(Color.BlackPlaceholder)
+                            .underline(false)
                     )
                     Spacer()
                     inline()
+                        .underline(false)
                 }
             } else {
                 HStack {
@@ -50,10 +52,12 @@ struct InputFieldView<Content: View>: View {
                         prompt: Text(placeholder)
                             .font(.pretendard(.regular, size: 16))
                             .foregroundStyle(Color.BlackPlaceholder)
+                            .underline(false)
                     )
                     
                     Spacer()
                     inline()
+                        .underline(false)
                 }
 
             }
@@ -61,8 +65,9 @@ struct InputFieldView<Content: View>: View {
         .padding(.vertical, 18)
         .padding(.horizontal, 24)
         .font(.pretendard(.regular, size: 16))
-        .foregroundStyle(alert ? Color.RedWarning : Color.BlackInk)
-        .underline(alert ? true : false)
+        .foregroundStyle(alert ? Color.RedSoft: Color.BlackInk)
+        .underline(alert)
+        .id(alert)
         .background(Color.BlackSoft)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .autocorrectionDisabled(true)

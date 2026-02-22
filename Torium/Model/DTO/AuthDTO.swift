@@ -6,13 +6,18 @@
 //
 import Foundation
 
-nonisolated struct AuthResponseDTO: Decodable {
+nonisolated struct AuthDTO: Decodable {
     let accessToken: String
     let refreshToken: String
-    let user: UserResponseDTO
+    let user: UserDTO
 }
 
-nonisolated struct TokenResponseDTO: Codable {
+nonisolated struct TokenDTO: Codable {
     let accessToken: String
     let refreshToken: String
+}
+
+nonisolated struct EmailDTO: Codable {
+    let createdAt: Date
+    let expiredAt: Date
 }
