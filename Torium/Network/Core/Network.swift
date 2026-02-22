@@ -79,7 +79,7 @@ final class Network {
         
         // 응답 처리
         switch response.result {
-        case .success(let data):
+        case .success:
             return 
             
         case .failure(let error):
