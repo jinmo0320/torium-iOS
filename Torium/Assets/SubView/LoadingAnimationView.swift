@@ -43,14 +43,14 @@ struct LoadingAnimationView: View {
     }
     
     private func startAnimationCycle() {
-        // 1단계: 선이 그려짐
+        // 1단계: 로고가 그려짐
         withAnimation(.easeInOut(duration: 0.5)) {
             sweepEnd = (180+15)/360
         } completion: {
             sweepEnd = (180-15)/360
             showTail = true
             
-            // 2단계: 첫 번째 회전 (질문하신 신호 확인 지점)
+            // 2단계: 신호 확인 지점
             withAnimation(.easeInOut(duration: 0.5).delay(0.3)) {
                 rotation = 90-15
             } completion: {

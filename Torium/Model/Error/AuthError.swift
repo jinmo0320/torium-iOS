@@ -37,11 +37,11 @@ enum ForgotEmailError: Error, LocalizedError {
     }
 }
 
-enum VerificationError: Error, LocalizedError, Equatable {
+enum VerificationError: Error, LocalizedError {
     case verificationFailed
 }
 
-enum SetPasswordError: Error, LocalizedError, Equatable {
+enum SetPasswordError: Error, LocalizedError {
     case emailNotVerified
 
     public var errorDescription: String? {
