@@ -22,8 +22,14 @@ struct MainFlow {
         case main(MainFeature.Action)
         case path(StackActionOf<Path>)
         case goBack
+        
+        case delegate(RootFeature.NavigationDelegate)
     }
-
+    
+    enum NavigationDelegate {
+        case goOut
+    }
+    
     var body: some Reducer<State, Action> {
         Scope(state: \.main, action: \.main) {
             MainFeature()
@@ -34,6 +40,9 @@ struct MainFlow {
             case .goBack:
                 _ = state.path.popLast()
                 return .none
+            
+            case .main(.delegate(.goOut)):
+                return .send(.delegate(.goSplash))
 
             case .path(let action):
                 switch action {

@@ -24,28 +24,35 @@ final class AuthInterceptor: RequestInterceptor {
         completion(.success(urlRequest))
     }
     
-    // token refresh
+    // api 요청 실패 시
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+        // 401 에러인지 판별
+        print(error)
+        guard let afError = error as? AFError, afError.isResponseValidationError else {
+            completion(.doNotRetry)
+            return
+        }
+
         guard let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401 else {
             completion(.doNotRetry)
             return
         }
         
-        guard request.retryCount < 2 else { return completion(.doNotRetryWithError(error)) }
         Task {
             do {
                 guard let refreshToken = await KeyChainManager.shared.readToken(type: .refreshToken) else {
                     completion(.doNotRetry)
                     return
                 }
-
+        
                 let dto: TokenDTO = try await Network.shared.request(AuthRouter.refreshToken(refreshToken: refreshToken))
             
                 _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
                 _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
-            } catch {
-                ///재로그인 요청 구현
-                return completion(.doNotRetryWithError(error))
+                
+                completion(.retry)
+            } catch(let err) {
+                completion(.doNotRetryWithError(err))
             }
         }
     }

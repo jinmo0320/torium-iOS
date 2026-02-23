@@ -12,8 +12,11 @@ struct MainView: View {
     var store: StoreOf<MainFeature>
     
     var body: some View {
-        ZStack {
+        VStack {
             Text("hello world")
+            Button("logout") {
+                store.send(.logoutTapped)
+            }
         }
     }
 }

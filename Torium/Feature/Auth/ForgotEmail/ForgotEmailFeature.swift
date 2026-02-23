@@ -28,12 +28,7 @@ struct ForgotEmailFeature {
         case alert(PresentationAction<Alert>)
         enum Alert: Equatable {}
         
-        case delegate(Delegate)
-        enum Delegate {
-            case goBack
-            case goRoot
-            case goVerify(String, Date)
-        }
+        case delegate(AuthFlow.NavigaitonDelegate)
     }
 
     @Dependency(\.authClient) var authClient
@@ -58,10 +53,7 @@ struct ForgotEmailFeature {
                 
                 return .run {
                     [email = state.email] send in
-                    
-                    await send(
-                        .nextResponse(Result{ try await authClient.sendForgot(email) })
-                    )
+                    await send(.nextResponse(Result{ try await authClient.sendForgot(email) }))
                 }
                 
             case .nextResponse(.success(let expiredAt)):

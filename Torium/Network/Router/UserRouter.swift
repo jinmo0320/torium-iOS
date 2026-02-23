@@ -29,9 +29,9 @@ enum UserRouter: Router {
     var path: String {
         switch self {
         case .me:
-            return "/user/me"
+            return "/users/me"
         case .changePassword:
-            return "/user/me/password"
+            return "/users/me/password"
         }
     }
 

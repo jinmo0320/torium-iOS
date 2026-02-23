@@ -12,21 +12,22 @@ struct SplashFeature {
     @ObservableState
     struct State: Equatable {
         var isLoading: Bool = false
+        
+        @Presents var alert: AlertState<Action.Alert>?
     }
 
-    enum Action {
+    enum Action: BindableAction {
+        case binding(BindingAction<State>)
         case onAppear
         case autoLogin
         case autoLoginResponse(Result<User, Error>)
         
-        case delegate(Delegate)
-        enum Delegate {
-            case goMain(User)
-            case goAuth
-        }
+        case alert(PresentationAction<Alert>)
+        enum Alert: Equatable {}
+        
+        case delegate(RootFeature.NavigationDelegate)
     }
 
-    @Dependency(\.continuousClock) var clock
     @Dependency(\.userClient) var userClient
 
     var body: some Reducer<State, Action> {
@@ -35,23 +36,28 @@ struct SplashFeature {
             case .autoLogin:
                 state.isLoading = true
                 return .run { send in
-                    try await clock.sleep(for: .seconds(3))
-                    await send(
-                        .autoLoginResponse(Result{ try await userClient.me() })
-                    )
+                    await send(.autoLoginResponse(Result{ try await userClient.me() }))
                 }
 
-            case .autoLoginResponse(.success(let user)):
+            case .autoLoginResponse(.success(_)):
                 state.isLoading = false
-                return .send(.delegate(.goMain(user)))
+                return .send(.delegate(.goMain))
 
-            case .autoLoginResponse(.failure(_)):
+            case .autoLoginResponse(.failure(let error)):
                 state.isLoading = false
+                state.alert = AlertState {
+                    TextState("에러 발생")
+                } actions: {
+                    ButtonState { TextState("확인") }
+                } message: {
+                    TextState(error.localizedDescription)
+                }
                 return .send(.delegate(.goAuth))
-
+                
             default:
                 return .none
             }
         }
+        .ifLet(\.$alert, action: \.alert)
     }
 }

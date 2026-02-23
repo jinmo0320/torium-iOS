@@ -36,12 +36,7 @@ struct ForgotVerifyFeature {
         case alert(PresentationAction<Alert>)
         enum Alert: Equatable {}
 
-        case delegate(Delegate)
-        enum Delegate {
-            case goRoot
-            case goBack
-            case goPassword(String)
-        }
+        case delegate(AuthFlow.NavigaitonDelegate)
     }
 
     @Dependency(\.continuousClock) var clock
@@ -94,13 +89,7 @@ struct ForgotVerifyFeature {
             case .nextTapped:
                 state.isLoading = true
                 return .run { [email = state.email, code = state.code] send in
-                    await send(
-                        .nextResponse(
-                            Result {
-                                try await authClient.verifyForgot(email, code)
-                            }
-                        )
-                    )
+                    await send(.nextResponse(Result{ try await authClient.verifyForgot(email, code) }))
                 }
 
             case .nextResponse(.success):
@@ -129,12 +118,7 @@ struct ForgotVerifyFeature {
                 state.isLoading = true
                 return .run {
                     [email = state.email] send in
-
-                    await send(
-                        .resendResponse(
-                            Result { try await authClient.sendForgot(email) }
-                        )
-                    )
+                    await send(.resendResponse(Result{ try await authClient.sendForgot(email) }))
                 }
                 
             case .resendResponse(.success(let expiredAt)):

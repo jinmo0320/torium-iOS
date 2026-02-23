@@ -36,12 +36,7 @@ struct RegisterVerifyFeature {
         case alert(PresentationAction<Alert>)
         enum Alert: Equatable {}
 
-        case delegate(Delegate)
-        enum Delegate {
-            case goRoot
-            case goBack
-            case goPassword(String)
-        }
+        case delegate(AuthFlow.NavigaitonDelegate)
     }
 
     @Dependency(\.continuousClock) var clock
@@ -94,13 +89,7 @@ struct RegisterVerifyFeature {
             case .nextTapped:
                 state.isLoading = true
                 return .run { [email = state.email, code = state.code] send in
-                    await send(
-                        .nextResponse(
-                            Result {
-                                try await authClient.verifyEmail(email, code)
-                            }
-                        )
-                    )
+                    await send(.nextResponse(Result{ try await authClient.verifyEmail(email, code) }))
                 }
 
             case .nextResponse(.success):
@@ -130,12 +119,7 @@ struct RegisterVerifyFeature {
                 state.isLoading = true
                 return .run {
                     [email = state.email] send in
-
-                    await send(
-                        .resendResponse(
-                            Result { try await authClient.sendEmail(email) }
-                        )
-                    )
+                    await send(.resendResponse(Result{ try await authClient.sendEmail(email) }))
                 }
 
             case .resendResponse(.success(let expiredAt)):

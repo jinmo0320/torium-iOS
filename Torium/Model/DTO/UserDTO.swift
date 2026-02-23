@@ -7,8 +7,12 @@
 import Foundation
 
 nonisolated struct UserDTO: Decodable {
-    let id: UUID
-    let name: String
-    let tag: String
-    let email: String
+    let user: Info
+    
+    nonisolated struct Info: Decodable {
+        let id: UUID
+        let name: String
+        let tag: String
+        let email: String
+    }
 }

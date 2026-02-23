@@ -42,13 +42,7 @@ struct RegisterPasswordFeature {
             case returnTapped
         }
 
-        case delegate(Delegate)
-        enum Delegate {
-            case goRoot
-            case goBack
-            case goSuccess
-            case goLogin
-        }
+        case delegate(AuthFlow.NavigaitonDelegate)
     }
 
     @Dependency(\.authClient) var authClient
@@ -95,7 +89,7 @@ struct RegisterPasswordFeature {
                     )
                 }
 
-            case .nextResponse(.success(let user)):
+            case .nextResponse(.success(_)):
                 state.isLoading = false
                 return .send(.delegate(.goSuccess))
 
@@ -123,7 +117,7 @@ struct RegisterPasswordFeature {
                 return .none
 
             case .alert(.presented(.returnTapped)):
-                return .send(.delegate(.goLogin))
+                return .send(.delegate(.goBack))
 
             case .incorrectPasswordFormat:
                 state.isLoading = false

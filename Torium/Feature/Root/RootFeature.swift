@@ -25,6 +25,12 @@ struct RootFeature {
         case auth(AuthFlow.Action)
         case main(MainFlow.Action)
     }
+    
+    enum NavigationDelegate {
+        case goAuth
+        case goMain
+        case goSplash
+    }
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
@@ -33,7 +39,11 @@ struct RootFeature {
                 state = .auth(AuthFlow.State())
                 return .none
             
-            case .splash(.delegate(.goMain(let user))):
+            case .splash(.delegate(.goMain)):
+                state = .main(MainFlow.State())
+                return .none
+                
+            case .auth(.delegate(.goMain)):
                 state = .main(MainFlow.State())
                 return .none
                 

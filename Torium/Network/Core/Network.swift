@@ -11,6 +11,11 @@ import Foundation
 final class Network {
     static let shared = Network()
     private let session: Session
+    private let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
+    }()
 
     private init() {
         self.session = Session(eventMonitors: [NetworkLogger()])
@@ -20,33 +25,27 @@ final class Network {
         -> T
     {
         // Interceptor 설정
-        var interceptor: AuthInterceptor? = nil
-        if let baseRouter = router as? Router, baseRouter.requiresAuth {
-            interceptor = AuthInterceptor.shared
-        }
+        let interceptor = (router as? Router)?.requiresAuth == true ? AuthInterceptor.shared : nil
         
         // Network 요청
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
         let response = await session.request(router, interceptor: interceptor)
-            .validate()
             .serializingDecodable(SUCCESS<T>.self, decoder: decoder)
             .response
         
         // 응답 처리
         switch response.result {
-        case .success(let data):
-            return data.data
+        case .success(let decoded):
+            return decoded.data
             
         case .failure(let error):
             if let data = response.data,
-               let decoded = try? JSONDecoder().decode(FAILURE.self, from: data),
+               let decoded = try? decoder.decode(FAILURE.self, from: data),
                let baseRouter = router as? Router,
-               let e = baseRouter.errorMap?.mapped(errorCode: decoded.error.code) {
-                throw e
+               let mappedError = baseRouter.errorMap?.mapped(errorCode: decoded.error.code) {
+                throw mappedError
             }
-
-            if case .sessionTaskFailed(let underlyingError) = error.asAFError,
+            
+            if case .sessionTaskFailed(let underlyingError) = error,
                let urlError = underlyingError as? URLError {
                 switch urlError.code {
                 case .notConnectedToInternet: throw NetworkError.notConnectedToInternet
@@ -64,33 +63,28 @@ final class Network {
         -> Void
     {
         // Interceptor 설정
-        var interceptor: AuthInterceptor? = nil
-        if let baseRouter = router as? Router, baseRouter.requiresAuth {
-            interceptor = AuthInterceptor.shared
-        }
-        
+        let interceptor = (router as? Router)?.requiresAuth == true ? AuthInterceptor.shared : nil
+
         // Network 요청
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
         let response = await session.request(router, interceptor: interceptor)
             .validate()
-            .serializingDecodable(Empty.self, decoder: decoder)
+            .serializingData()
             .response
         
         // 응답 처리
         switch response.result {
         case .success:
-            return 
+            return
             
         case .failure(let error):
             if let data = response.data,
-               let decoded = try? JSONDecoder().decode(FAILURE.self, from: data),
+               let decoded = try? decoder.decode(FAILURE.self, from: data),
                let baseRouter = router as? Router,
-               let e = baseRouter.errorMap?.mapped(errorCode: decoded.error.code) {
-                throw e
+               let mappedError = baseRouter.errorMap?.mapped(errorCode: decoded.error.code) {
+                throw mappedError
             }
-
-            if case .sessionTaskFailed(let underlyingError) = error.asAFError,
+            
+            if case .sessionTaskFailed(let underlyingError) = error,
                let urlError = underlyingError as? URLError {
                 switch urlError.code {
                 case .notConnectedToInternet: throw NetworkError.notConnectedToInternet
