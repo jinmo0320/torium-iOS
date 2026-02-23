@@ -19,10 +19,11 @@ struct AuthMainView: View {
                 
                 Image(.toriumLogo)
                     .resizable()
-                    .frame(width: 150, height: 150)
+                    .frame(width: 120, height: 120)
+                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
 
                 Text("Torium")
-                    .font(.redHat(.bold, size: 32))
+                    .font(.redHat(.heavy, size: 32))
                     .foregroundStyle(Color.Brand)
                 
                 Spacer()

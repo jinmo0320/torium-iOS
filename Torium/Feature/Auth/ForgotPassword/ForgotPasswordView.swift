@@ -19,6 +19,7 @@ struct ForgotPasswordView: View {
                 text: $store.password,
                 placeholder: "비밀번호",
                 secure: true,
+                alert: store.isIncorretPasswordFormat,
                 inline: {
                     if store.password.count < 8 {
                         Text("\(store.password.count)/8")
@@ -31,32 +32,29 @@ struct ForgotPasswordView: View {
             InputFieldView(
                 text: $store.passwordRepeat,
                 placeholder: "비밀번호 확인",
-                secure: true
+                secure: true,
+                alert: store.isPasswordMismatch
             )
 
             EmptyView()
             VStack(alignment: .leading, spacing: 8) {
                 if store.isIncorretPasswordFormat {
-                    Text(
-                        "\(Image(systemName: "exclamationmark.circle.fill")) 비밀번호 형식이 올바르지 않습니다!"
-                    )
+                    Label("비밀번호 형식이 올바르지 않습니다!", systemImage: "exclamationmark.circle.fill")
                     if !store.pwdFormat.alphabet {
-                        Text("\(Image(systemName: "x.circle")) 알파벳")
+                        Label("알파벳", systemImage: "x.circle")
                     }
                     if !store.pwdFormat.number {
-                        Text("\(Image(systemName: "x.circle")) 숫자")
+                        Label("숫자", systemImage: "x.circle")
                     }
                     if !store.pwdFormat.specialCharacter {
-                        Text("\(Image(systemName: "x.circle")) 특수문자(!@#$%^&*?~...)")
+                        Label("특수문자(!@#$%^&*?~...)", systemImage: "x.circle")
                     }
                     if !store.pwdFormat.length {
-                        Text("\(Image(systemName: "x.circle")) 8자 이상")
+                        Label("8자 이상", systemImage: "x.circle")
                     }
 
                 } else if store.isPasswordMismatch {
-                    Text(
-                        "\(Image(systemName: "exclamationmark.circle.fill")) 비밀번호가 일치하지 않습니다!"
-                    )
+                    Label("비밀번호가 일치하지 않습니다!", systemImage: "exclamationmark.circle.fill")
                 }
             }
 

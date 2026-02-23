@@ -30,13 +30,7 @@ struct LoginFeature {
         case alert(PresentationAction<Alert>)
         enum Alert: Equatable {}
         
-        case delegate(Delegate)
-        enum Delegate {
-            case goRoot
-            case goMain
-            case goRegister
-            case goForgotpassword
-        }
+        case delegate(AuthFlow.NavigaitonDelegate)
     }
 
     @Dependency(\.authClient) var authClient
@@ -52,13 +46,7 @@ struct LoginFeature {
                 state.isLoading = true
                 return .run {
                     [email = state.email, password = state.password] send in
-                    await send(
-                        .loginResponse(
-                            Result {
-                                try await authClient.login(email, password)
-                            }
-                        )
-                    )
+                    await send(.loginResponse(Result{ try await authClient.login(email, password) }))
                 }
 
             case .loginResponse(.success(_)):
@@ -80,7 +68,7 @@ struct LoginFeature {
                 return .send(.delegate(.goRegister))
 
             case .forgotPasswordTapped:
-                return .send(.delegate(.goForgotpassword))
+                return .send(.delegate(.goForgot))
 
             default:
                 return .none

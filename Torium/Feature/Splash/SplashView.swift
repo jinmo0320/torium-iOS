@@ -8,17 +8,19 @@ import ComposableArchitecture
 import SwiftUI
 
 struct SplashView: View {
-    var store: StoreOf<SplashFeature>
+    @Bindable var store: StoreOf<SplashFeature>
     
     var body: some View {
         ZStack {
-            if store.isLoading {
-                ProgressView()
+            LoadingAnimationView(isLoading: store.isLoading) {
+                
             }
+            .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
         }
         .onAppear {
             store.send(.autoLogin)
         }
+        .alert($store.scope(state: \.alert, action: \.alert))
     }
 }
 

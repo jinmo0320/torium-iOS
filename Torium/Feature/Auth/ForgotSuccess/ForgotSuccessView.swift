@@ -33,6 +33,7 @@ struct ForgotSuccessView: View {
             }
             .fixedSize(horizontal: true, vertical: false)
         }
+        .navigationBarBackButtonHidden()
     }
 }
 

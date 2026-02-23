@@ -6,6 +6,7 @@
 //
 
 import ComposableArchitecture
+import Foundation
 
 @Reducer
 struct AuthFlow {
@@ -41,8 +42,22 @@ struct AuthFlow {
         case path(StackActionOf<Path>)
         case destination(PresentationAction<Destination.Action>)
         
-        case goBack
+        case pop
+        case close
+        
+        case delegate(RootFeature.NavigationDelegate)
+    }
+    
+    enum NavigaitonDelegate {
         case goRoot
+        case goBack
+        case goLogin
+        case goMain
+        case goRegister
+        case goForgot
+        case goVerify(String, Date)
+        case goPassword(String)
+        case goSuccess
     }
 
     var body: some Reducer<State, Action> {
@@ -52,11 +67,11 @@ struct AuthFlow {
 
         Reduce { state, action in
             switch action {
-            case .goBack:
+            case .pop:
                 _ = state.path.popLast()
                 return .none
 
-            case .goRoot:
+            case .close:
                 state.destination = nil
                 return .none
 
@@ -76,13 +91,17 @@ struct AuthFlow {
                     return .none
                     
                 // login -> forgotPassword
-                case .element(id: _, action: .login(.delegate(.goForgotpassword))):
+                case .element(id: _, action: .login(.delegate(.goForgot))):
                     state.path.append(.forgotEmail(ForgotEmailFeature.State()))
                     return .none
                     
+                // login -> main
+                case .element(id: _, action: .login(.delegate(.goMain))):
+                    return .send(.delegate(.goMain))
+                    
                 // register send -> verify
-                case .element(id: _, action: .registerEmail(.delegate(.goVerify(let email)))):
-                    state.path.append(.registerVerify(RegisterVerifyFeature.State(email: email)))
+                case .element(id: _, action: .registerEmail(.delegate(.goVerify(let email, let expiredAt)))):
+                    state.path.append(.registerVerify(RegisterVerifyFeature.State(email: email, expiredAt: expiredAt)))
                     return .none
                 
                 // register verify -> password
@@ -95,15 +114,13 @@ struct AuthFlow {
                     state.path.append(.registerSuccess(RegisterSuccessFeature.State()))
                     return .none
                     
-                // register password -> login
-                case .element(id: _, action: .registerPassword(.delegate(.goLogin))):
-                    state.path.removeAll()
-                    state.path.append(.login(LoginFeature.State()))
-                    return .none
-                    
+                // register success -> main
+                case .element(id: _, action: .registerSuccess(.delegate(.goMain))):
+                    return .send(.delegate(.goMain))
+                
                 // forgot send -> verify
-                case .element(id: _, action: .forgotEmail(.delegate(.goVerify(let email)))):
-                    state.path.append(.forgotVerify(ForgotVerifyFeature.State(email: email)))
+                case .element(id: _, action: .forgotEmail(.delegate(.goVerify(let email, let expiredAt)))):
+                    state.path.append(.forgotVerify(ForgotVerifyFeature.State(email: email, expiredAt: expiredAt)))
                     return .none
                     
                 // forgot verify -> password
@@ -116,24 +133,24 @@ struct AuthFlow {
                     state.path.append(.forgotSuccess(ForgotSuccessFeature.State()))
                     return .none
                 
-                // forgot password -> login
-                case .element(id: _, action: .forgotPassword(.delegate(.goLogin))):
+                // forgot success -> login
+                case .element(id: _, action: .forgotSuccess(.delegate(.goLogin))):
                     state.path.removeAll()
                     state.path.append(.login(LoginFeature.State()))
                     return .none
                     
                 // 공통 goRoot 처리
                 case .element(id: _, action: let action) where action.isGoRoot:
-                    return .send(.goRoot)
+                    return .send(.close)
                 
                 // 공통 goBack 처리
                 case .element(id: _, action: let action) where action.isGoBack:
-                    return .send(.goBack)
+                    return .send(.pop)
                     
                 // 공통 goBack 특수 케이스 처리
                 case .element(id: _, action: let action) where action.isGoInit:
-                    state.path.removeAll()
-                    state.path.append(.login(LoginFeature.State()))
+                    _ = state.path.popLast()
+                    _ = state.path.popLast()
                     return .none
 
                 default:

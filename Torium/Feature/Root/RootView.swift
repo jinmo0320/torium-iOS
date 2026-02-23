@@ -24,9 +24,6 @@ struct RootView: View {
                 MainFlowView(store: store.scope(state: \.main, action: \.main)!)
             }
         }
-        .onAppear {
-            print("hi")
-        }
         .animation(.default, value: store.state)
     }
 }

@@ -29,9 +29,9 @@ enum UserRouter: Router {
     var path: String {
         switch self {
         case .me:
-            return "/user/me"
+            return "/users/me"
         case .changePassword:
-            return "/user/me/change-password"
+            return "/users/me/password"
         }
     }
 
@@ -46,5 +46,18 @@ enum UserRouter: Router {
 
     var requiresAuth: Bool {
         return true
+    }
+}
+
+extension UserRouter {
+    var errorMap: ErrorMapper? {
+        switch self {
+        case .changePassword:
+            return ErrorMapper {
+                ErrorCode.CURRENT_PASSWORD_NOT_MATCHED ~> ChangePasswordError.currentPasswordNotMatched
+            }
+        default:
+            return nil
+        }
     }
 }

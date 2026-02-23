@@ -11,31 +11,19 @@ import ComposableArchitecture
 struct RegisterSuccessFeature {
     @ObservableState
     struct State: Equatable {
-        var isLoading: Bool = false
     }
 
     enum Action {
         case nextTapped
-        case nextResponse(Result<Void, Error>)
         
-        case delegate(Delegate)
-        enum Delegate {
-            case goMain
-        }
+        case delegate(AuthFlow.NavigaitonDelegate)
     }
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case .nextTapped:
-                state.isLoading = true
-                return .none
-            case .nextResponse(.success):
-                state.isLoading = false
                 return .send(.delegate(.goMain))
-            case .nextResponse(.failure(let error)):
-                state.isLoading = false
-                return .none
             default: return .none
             }
         }

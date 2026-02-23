@@ -14,6 +14,8 @@ struct RegisterVerifyFeature {
     struct State: Equatable {
         var email: String = ""
         var code: String = ""
+        var timerDisplay: String = "00:00"
+        var expiredAt: Date = .now
         var isLoading: Bool = false
         var isInvalidCode: Bool = false
         var isSuccessResend: Bool = false
@@ -23,25 +25,27 @@ struct RegisterVerifyFeature {
 
     enum Action: BindableAction {
         case binding(BindingAction<State>)
+        case onAppear
+        case timerTick
         case nextTapped
         case nextResponse(Result<Void, Error>)
         case resendTapped
-        case resendResponse(Result<Void, Error>)
+        case resendResponse(Result<Date, Error>)
         case resetResendState
 
         case alert(PresentationAction<Alert>)
         enum Alert: Equatable {}
 
-        case delegate(Delegate)
-        enum Delegate {
-            case goRoot
-            case goBack
-            case goPassword(String)
-        }
+        case delegate(AuthFlow.NavigaitonDelegate)
     }
 
     @Dependency(\.continuousClock) var clock
     @Dependency(\.authClient) var authClient
+    
+    nonisolated private enum CancelID {
+        case timer
+    }
+
 
     var body: some Reducer<State, Action> {
         BindingReducer()
@@ -54,23 +58,45 @@ struct RegisterVerifyFeature {
             case .binding:
                 return .none
 
+            case .onAppear:
+                return .send(.timerTick)
+
+            case .timerTick:
+                let now = Date.now
+                let remaining = max(
+                    0,
+                    Int(state.expiredAt.timeIntervalSince(now))
+                )
+
+                let minutes = remaining / 60
+                let seconds = remaining % 60
+                state.timerDisplay = String(
+                    format: "%02d:%02d",
+                    minutes,
+                    seconds
+                )
+
+                if remaining <= 0 {
+                    return .cancel(id: CancelID.timer)
+                }
+
+                return .run { send in
+                    try await clock.sleep(for: .seconds(1))
+                    await send(.timerTick)
+                }
+                .cancellable(id: CancelID.timer, cancelInFlight: true)
+
             case .nextTapped:
                 state.isLoading = true
                 return .run { [email = state.email, code = state.code] send in
-                    await send(
-                        .nextResponse(
-                            Result {
-                                try await authClient.verifyEmail(email, code)
-                            }
-                        )
-                    )
+                    await send(.nextResponse(Result{ try await authClient.verifyEmail(email, code) }))
                 }
 
             case .nextResponse(.success):
                 state.isLoading = false
                 return .send(.delegate(.goPassword(state.email)))
 
-            case .nextResponse(.failure(let error as RegisterVerifyError))
+            case .nextResponse(.failure(let error as VerificationError))
             where error == .verificationFailed:
                 state.isLoading = false
                 state.isInvalidCode = true
@@ -79,6 +105,7 @@ struct RegisterVerifyFeature {
             case .nextResponse(.failure(let error)):
                 state.isLoading = false
                 state.isInvalidCode = false
+                print(error)
                 state.alert = AlertState {
                     TextState("인증 실패")
                 } actions: {
@@ -92,21 +119,20 @@ struct RegisterVerifyFeature {
                 state.isLoading = true
                 return .run {
                     [email = state.email] send in
-
-                    await send(
-                        .resendResponse(
-                            Result { try await authClient.sendEmail(email) }
-                        )
-                    )
+                    await send(.resendResponse(Result{ try await authClient.sendEmail(email) }))
                 }
-                
-            case .resendResponse(.success):
+
+            case .resendResponse(.success(let expiredAt)):
                 state.isLoading = false
                 state.isSuccessResend = true
-                return .run { send in
-                    try await clock.sleep(for: .seconds(2))
-                    await send(.resetResendState)
-                }
+                state.expiredAt = expiredAt
+                return .merge(
+                    .send(.timerTick),
+                    .run { send in
+                        try await clock.sleep(for: .seconds(2))
+                        await send(.resetResendState)
+                    }
+                )
 
             case .resendResponse(.failure(let error)):
                 state.isLoading = false
@@ -118,7 +144,7 @@ struct RegisterVerifyFeature {
                     TextState(error.localizedDescription)
                 }
                 return .none
-                
+
             case .resetResendState:
                 state.isSuccessResend = false
                 return .none

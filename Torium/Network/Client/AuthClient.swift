@@ -10,44 +10,34 @@ import ComposableArchitecture
 import Foundation
 
 struct AuthClient {
-    var login:
-        @Sendable (_ email: String, _ password: String) async throws -> User
-    var logout:
-        @Sendable () async -> Void
-    var sendEmail: @Sendable (_ email: String) async throws -> Void
-    var verifyEmail:
-        @Sendable (_ email: String, _ code: String) async throws -> Void
-    var register:
-        @Sendable (_ email: String, _ password: String) async throws -> User
-    var sendForgot: @Sendable (_ email: String) async throws -> Void
-    var verifyForgot:
-        @Sendable (_ email: String, _ code: String) async throws -> Void
-    var resetPassword:
-        @Sendable (_ email: String, _ newPassword: String) async throws -> Void
+    var login: @Sendable (String, String) async throws -> User
+    var logout: @Sendable () async -> Void
+    var sendEmail: @Sendable (String) async throws -> Date
+    var verifyEmail: @Sendable (String, String) async throws -> Void
+    var register: @Sendable (String, String) async throws -> User
+    var sendForgot: @Sendable (String) async throws -> Date
+    var verifyForgot: @Sendable (String, String) async throws -> Void
+    var resetPassword: @Sendable (String, String) async throws -> Void
 }
 
 extension AuthClient: DependencyKey {
     static var liveValue: Self {
         return Self(
             login: { email, password in
-                do {
-                    let dto: AuthResponseDTO = try await NetworkManager.shared
-                        .request(
-                            AuthRouter.login(email: email, password: password)
-                        )
-                    
-                    _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
-                    _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
-
-                    return User(
-                        id: dto.user.id,
-                        name: dto.user.name,
-                        tag: dto.user.tag,
-                        email: dto.user.email
+                let dto: AuthDTO = try await Network.shared
+                    .request(
+                        AuthRouter.login(email: email, password: password)
                     )
-                } catch {
-                    throw LoginError(from: error as! ErrorResponseDTO)
-                }
+                
+                _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
+                _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
+
+                return User(
+                    id: dto.user.id,
+                    name: dto.user.name,
+                    tag: dto.user.tag,
+                    email: dto.user.email
+                )
             },
             
             logout: {
@@ -56,80 +46,58 @@ extension AuthClient: DependencyKey {
             },
 
             sendEmail: { email in
-                do {
-                    let _: Empty = try await NetworkManager.shared.request(
-                        AuthRouter.sendEmail(email: email)
-                    )
-                } catch {
-                    throw RegisterEmailError(from: error as! ErrorResponseDTO)
-                }
+                let dto: EmailDTO = try await Network.shared.request(
+                    AuthRouter.sendEmail(email: email)
+                )
+                return dto.expiredAt
             },
 
             verifyEmail: { email, code in
-                do {
-                    let _: Empty = try await NetworkManager.shared.request(
-                        AuthRouter.verifyEmail(email: email, code: code)
-                    )
-                } catch {
-                    throw RegisterVerifyError(from: error as! ErrorResponseDTO)
-                }
+                try await Network.shared.request(
+                    AuthRouter.verifyEmail(email: email, code: code)
+                )
             },
 
             register: { email, password in
-                do {
-                    let dto: AuthResponseDTO = try await NetworkManager.shared
-                        .request(
-                            AuthRouter.register(
-                                email: email,
-                                password: password
-                            )
+                let dto: AuthDTO = try await Network.shared
+                    .request(
+                        AuthRouter.register(
+                            email: email,
+                            password: password
                         )
-                    
-                    _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
-                    _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
-
-                    return User(
-                        id: dto.user.id,
-                        name: dto.user.name,
-                        tag: dto.user.tag,
-                        email: dto.user.email
                     )
-                } catch {
-                    throw RegisterPasswordError(from: error as! ErrorResponseDTO)
-                }
+                
+                _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
+                _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
+
+                return User(
+                    id: dto.user.id,
+                    name: dto.user.name,
+                    tag: dto.user.tag,
+                    email: dto.user.email
+                )
             },
 
             sendForgot: { email in
-                do {
-                    let _: Empty = try await NetworkManager.shared.request(
-                        AuthRouter.sendForgot(email: email)
-                    )
-                } catch {
-                    throw ForgotEmailError(from: error as! ErrorResponseDTO)
-                }
+                let dto: EmailDTO = try await Network.shared.request(
+                    AuthRouter.sendForgot(email: email)
+                )
+                return dto.expiredAt
             },
 
             verifyForgot: { email, code in
-                do {
-                    let _: Empty = try await NetworkManager.shared.request(
-                        AuthRouter.verifyForgot(email: email, code: code)
-                    )
-                } catch {
-                    throw ForgotVerifyError(from: error as! ErrorResponseDTO)
-                }
+                try await Network.shared.request(
+                    AuthRouter.verifyForgot(email: email, code: code)
+                )
             },
 
             resetPassword: { email, newPassword in
-                do {
-                    let _: Empty = try await NetworkManager.shared.request(
-                        AuthRouter.resetPassword(
-                            email: email,
-                            newPassword: newPassword
-                        )
+                try await Network.shared.request(
+                    AuthRouter.resetPassword(
+                        email: email,
+                        newPassword: newPassword
                     )
-                } catch {
-                    throw ForgotPasswordError(from: error as! ErrorResponseDTO)
-                }
+                )
             }
         )
     }

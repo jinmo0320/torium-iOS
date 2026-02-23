@@ -35,6 +35,7 @@ struct RegisterSuccessView: View {
             }
             .fixedSize(horizontal: true, vertical: false)
         }
+        .navigationBarBackButtonHidden()
     }
 }
 

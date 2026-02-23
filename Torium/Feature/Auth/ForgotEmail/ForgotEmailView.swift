@@ -24,9 +24,7 @@ struct ForgotEmailView: View {
 
             EmptyView()
             if store.isIncorrectEmailFormat {
-                Text(
-                    "\(Image(systemName: "exclamationmark.circle.fill")) 이메일 형식이 올바르지 않습니다!"
-                )
+                Label("이메일 형식이 올바르지 않습니다!", systemImage: "exclamationmark.circle.fill")
             }
 
             SubmitButtonView(

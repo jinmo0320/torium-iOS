@@ -22,18 +22,13 @@ struct RegisterEmailFeature {
     enum Action: BindableAction {
         case binding(BindingAction<State>)
         case nextTapped
-        case nextResponse(Result<Void, Error>)
+        case nextResponse(Result<Date, Error>)
         case incorrectEmail
         
         case alert(PresentationAction<Alert>)
         enum Alert: Equatable {}
         
-        case delegate(Delegate)
-        enum Delegate {
-            case goBack
-            case goRoot
-            case goVerify(String)
-        }
+        case delegate(AuthFlow.NavigaitonDelegate)
     }
 
     @Dependency(\.authClient) var authClient
@@ -58,15 +53,12 @@ struct RegisterEmailFeature {
                 
                 return .run {
                     [email = state.email] send in
-                    
-                    await send(
-                        .nextResponse(Result{ try await authClient.sendEmail(email) })
-                    )
+                    await send(.nextResponse(Result{ try await authClient.sendEmail(email) }))
                 }
                 
-            case .nextResponse(.success):
+            case .nextResponse(.success(let expiredAt)):
                 state.isLoading = false
-                return .send(.delegate(.goVerify(state.email)))
+                return .send(.delegate(.goVerify(state.email, expiredAt)))
                 
             case .nextResponse(.failure(let error)):
                 state.isLoading = false

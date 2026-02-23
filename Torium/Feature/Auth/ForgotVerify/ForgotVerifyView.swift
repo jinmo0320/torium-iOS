@@ -18,6 +18,7 @@ struct ForgotVerifyView: View {
             InputFieldView(
                 text: $store.code,
                 placeholder: "인증번호",
+                alert: store.isInvalidCode,
                 inline: {
                     Text(
                         store.isLoading
@@ -37,11 +38,13 @@ struct ForgotVerifyView: View {
             EmptyView()
 
             EmptyView()
-            Text(
-                store.isInvalidCode
-                    ? "\(Image(systemName: "exclamationmark.circle.fill")) 잘못된 인증번호입니다!"
-                    : "05:00"
-            )
+            Group {
+                if store.isInvalidCode {
+                    Label("잘못된 인증번호입니다!", systemImage: "exclamationmark.circle.fill")
+                } else {
+                    Text(store.timerDisplay)
+                }
+            }.onAppear { store.send(.onAppear) }
 
             SubmitButtonView(
                 text: "다음",

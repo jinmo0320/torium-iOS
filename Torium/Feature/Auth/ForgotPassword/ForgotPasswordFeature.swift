@@ -42,13 +42,7 @@ struct ForgotPasswordFeature {
             case returnTapped
         }
 
-        case delegate(Delegate)
-        enum Delegate {
-            case goRoot
-            case goBack
-            case goSuccess
-            case goLogin
-        }
+        case delegate(AuthFlow.NavigaitonDelegate)
     }
 
     @Dependency(\.authClient) var authClient
@@ -86,20 +80,14 @@ struct ForgotPasswordFeature {
 
                 return .run {
                     [email = state.email, password = state.password] send in
-                    await send(
-                        .nextResponse(
-                            Result {
-                                try await authClient.resetPassword(email, password)
-                            }
-                        )
-                    )
+                    await send(.nextResponse(Result{ try await authClient.resetPassword(email, password) }))
                 }
 
             case .nextResponse(.success):
                 state.isLoading = false
                 return .send(.delegate(.goSuccess))
 
-            case .nextResponse(.failure(let error as ForgotPasswordError))
+            case .nextResponse(.failure(let error as SetPasswordError))
             where error == .emailNotVerified:
                 state.isLoading = false
                 state.alert = AlertState {
@@ -123,7 +111,7 @@ struct ForgotPasswordFeature {
                 return .none
 
             case .alert(.presented(.returnTapped)):
-                return .send(.delegate(.goLogin))
+                return .send(.delegate(.goBack))
 
             case .incorrectPasswordFormat:
                 state.isLoading = false

@@ -8,9 +8,9 @@
 import Alamofire
 import Foundation
 
-final class APIEventLogger: EventMonitor {
+final class NetworkLogger: EventMonitor {
     // 1. 요청이 시작될 때 호출
-    func requestDidFinish(_ request: Request) {
+    func requestDidResume(_ request: Request) {
         print("-------------------------------------------------------")
         print("🚀 [NETWORK] Request Started")
         print("- 🔗 URL: \(request.request?.url?.absoluteString ?? "Invalid URL")")

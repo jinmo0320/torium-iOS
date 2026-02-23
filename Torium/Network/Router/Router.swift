@@ -13,6 +13,7 @@ protocol Router: URLRequestConvertible {
     var method: HTTPMethod { get }
     var path: String { get }
     var parameters: Parameters? { get }
+    var errorMap: ErrorMapper? { get }
     
     var requiresAuth: Bool { get }
 }
