@@ -18,7 +18,6 @@ extension UserClient: DependencyKey {
     static var liveValue: Self {
         return Self(
             me: {
-                try await Network.shared.request(UserRouter.me)
                 let dto: UserDTO = try await Network.shared.request(UserRouter.me)
                 return User(
                     id: dto.user.id,

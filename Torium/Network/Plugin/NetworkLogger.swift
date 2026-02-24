@@ -9,15 +9,15 @@ import Alamofire
 import Foundation
 
 final class NetworkLogger: EventMonitor {
-    // 1. 요청이 시작될 때 호출
-    func requestDidResume(_ request: Request) {
+    let queue: DispatchQueue = DispatchQueue(label: "NetworkLogger")
+    
+    func requestDidFinish(_ request: Request) {
         print("-------------------------------------------------------")
         print("🚀 [NETWORK] Request Started")
         print("- 🔗 URL: \(request.request?.url?.absoluteString ?? "Invalid URL")")
         print("- 🛠 Method: \(request.request?.httpMethod ?? "Unknown")")
         print("- 📡 Headers: \(request.request?.allHTTPHeaderFields ?? [:])")
-
-        // cURL 형태로 출력 (터미널에서 바로 테스트 가능)
+        
         if let body = request.request?.httpBody,
             let string = String(data: body, encoding: .utf8)
         {

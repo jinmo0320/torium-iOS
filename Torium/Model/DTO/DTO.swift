@@ -6,15 +6,16 @@
 //
 import Foundation
 
-nonisolated struct SUCCESS<T: Decodable>: Decodable {
+nonisolated struct RESPONSE: Decodable {
     let success: Bool
     let message: String
+}
+
+nonisolated struct SUCCESS<T: Decodable>: Decodable {
     let data: T
 }
 
 nonisolated struct FAILURE: Decodable {
-    let success: Bool
-    let message: String
     let error: Content
     
     struct Content: Error, Decodable {

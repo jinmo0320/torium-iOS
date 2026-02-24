@@ -8,8 +8,8 @@
 import Foundation
 import Alamofire
 
-final class AuthInterceptor: RequestInterceptor {
-    static let shared = AuthInterceptor()
+final class Authenticator: RequestInterceptor {
+    static let shared = Authenticator()
     private init() {}
     
     // header에 토큰 달기
@@ -27,32 +27,32 @@ final class AuthInterceptor: RequestInterceptor {
     // api 요청 실패 시
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         // 401 에러인지 판별
-        guard let afError = error as? AFError, afError.isResponseValidationError else {
-            completion(.doNotRetry)
-            return
-        }
-
         guard let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401 else {
             completion(.doNotRetry)
             return
         }
         
-        Task {
-            do {
-                guard let refreshToken = await KeyChainManager.shared.readToken(type: .refreshToken) else {
-                    completion(.doNotRetry)
-                    return
-                }
+        completion(.doNotRetryWithError(AppError.unauthorized))
         
-                let dto: TokenDTO = try await Network.shared.request(AuthRouter.refreshToken(refreshToken: refreshToken))
-            
-                _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
-                _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
-                
-                completion(.retry)
-            } catch(let err) {
-                completion(.doNotRetryWithError(err))
-            }
-        }
+//        Task {
+//            do {
+//                print("hi")
+//
+//                guard let refreshToken = await KeyChainManager.shared.readToken(type: .refreshToken) else {
+//                    completion(.doNotRetry)
+//                    return
+//                }
+//
+//                let dto: TokenDTO = try await Network.shared.request(AuthRouter.refreshToken(refreshToken: refreshToken))
+//            
+//                _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
+//                _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
+//                
+//                completion(.retry)
+//            } catch(let err) {
+//                print("bye")
+//                completion(.doNotRetryWithError(err))
+//            }
+//        }
     }
 }
