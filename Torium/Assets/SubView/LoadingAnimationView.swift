@@ -7,8 +7,7 @@
 import SwiftUI
 
 struct LoadingAnimationView: View {
-    var isLoading: Bool
-    let completion: (() -> Void)?
+    @Binding var phase: SplashFeature.AnimationPhase
     
     @State private var sweepStart: CGFloat = 0
     @State private var sweepEnd: CGFloat = 0
@@ -38,55 +37,48 @@ struct LoadingAnimationView: View {
             }
         }
         .onAppear {
-            startAnimationCycle()
+            startAnimation()
+        }
+        .onChange(of: phase) {
+            if phase == .open {
+                startAnimation()
+            } else if phase == .close {
+                closeAnimation()
+            }
         }
     }
     
-    private func startAnimationCycle() {
-        // 1단계: 선이 그려짐
+    private func startAnimation() {
         withAnimation(.easeInOut(duration: 0.5)) {
             sweepEnd = (180+15)/360
         } completion: {
             sweepEnd = (180-15)/360
             showTail = true
-            
-            // 2단계: 첫 번째 회전 (질문하신 신호 확인 지점)
-            withAnimation(.easeInOut(duration: 0.5).delay(0.3)) {
+
+            withAnimation(.easeInOut(duration: 0.5)) {
                 rotation = 90-15
             } completion: {
-                checkPoint()
+                phase = .stop
             }
         }
     }
     
-    private func checkPoint() {
-        if !isLoading {
-            completion?()
-        } else {
-            continueAnimation()
-        }
-    }
-    
-    private func continueAnimation() {
-        withAnimation(.easeIn(duration: 0.5).delay(0.8)) {
+    private func closeAnimation() {
+        withAnimation(.easeIn(duration: 0.5).delay(0.5)) {
             rotation = 180+15
         } completion: {
             showTail = false
             withAnimation(.easeInOut(duration: 0.5)) {
                 sweepStart = (180-15)/360
             } completion: {
-                resetAndRestart()
+                sweepStart = 0
+                sweepEnd = 0
+                rotation = 0
+                showTail = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    phase = .open
+                }
             }
-        }
-    }
-    
-    private func resetAndRestart() {
-        sweepStart = 0
-        sweepEnd = 0
-        rotation = 0
-        showTail = false
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            startAnimationCycle()
         }
     }
 }

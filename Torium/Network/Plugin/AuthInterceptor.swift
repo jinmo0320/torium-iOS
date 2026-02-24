@@ -27,7 +27,6 @@ final class AuthInterceptor: RequestInterceptor {
     // api 요청 실패 시
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         // 401 에러인지 판별
-        print(error)
         guard let afError = error as? AFError, afError.isResponseValidationError else {
             completion(.doNotRetry)
             return

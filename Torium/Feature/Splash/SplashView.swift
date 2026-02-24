@@ -9,13 +9,11 @@ import SwiftUI
 
 struct SplashView: View {
     @Bindable var store: StoreOf<SplashFeature>
-    
+
     var body: some View {
         ZStack {
-            LoadingAnimationView(isLoading: store.isLoading) {
-                
-            }
-            .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
+            LoadingAnimationView(phase: $store.animation)
+                .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
         }
         .onAppear {
             store.send(.autoLogin)
