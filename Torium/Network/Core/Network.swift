@@ -25,37 +25,26 @@ final class Network {
         -> T
     {
         // Interceptor 설정
-        let interceptor = (router as? Router)?.requiresAuth == true ? AuthInterceptor.shared : nil
+        let interceptor = (router as? Router)?.requiresAuth == true ? Authenticator.shared : nil
         
         // Network 요청
         let response = await session.request(router, interceptor: interceptor)
-            .serializingDecodable(SUCCESS<T>.self, decoder: decoder)
+            .validate()
+            .serializingData()
             .response
         
         // 응답 처리
         switch response.result {
-        case .success(let decoded):
-            return decoded.data
+        case .success(let data):
+            do {
+                let decoded = try decoder.decode(SUCCESS<T>.self, from: data)
+                return decoded.data
+            } catch {
+                throw NetworkError.decodingFailed
+            }
             
         case .failure(let error):
-            if let data = response.data,
-               let decoded = try? decoder.decode(FAILURE.self, from: data),
-               let baseRouter = router as? Router,
-               let mappedError = baseRouter.errorMap?.mapped(errorCode: decoded.error.code) {
-                throw mappedError
-            }
-            
-            if case .sessionTaskFailed(let underlyingError) = error,
-               let urlError = underlyingError as? URLError {
-                switch urlError.code {
-                case .notConnectedToInternet: throw NetworkError.notConnectedToInternet
-                case .cannotConnectToHost: throw NetworkError.connectionFailed
-                case .timedOut: throw NetworkError.connectionTimedOut
-                default: break
-                }
-            }
-
-            throw NetworkError.unknown
+            throw handleError(response: response, error: error, router: router)
         }
     }
     
@@ -63,7 +52,7 @@ final class Network {
         -> Void
     {
         // Interceptor 설정
-        let interceptor = (router as? Router)?.requiresAuth == true ? AuthInterceptor.shared : nil
+        let interceptor = (router as? Router)?.requiresAuth == true ? Authenticator.shared : nil
 
         // Network 요청
         let response = await session.request(router, interceptor: interceptor)
@@ -77,24 +66,34 @@ final class Network {
             return
             
         case .failure(let error):
-            if let data = response.data,
-               let decoded = try? decoder.decode(FAILURE.self, from: data),
-               let baseRouter = router as? Router,
-               let mappedError = baseRouter.errorMap?.mapped(errorCode: decoded.error.code) {
-                throw mappedError
-            }
-            
-            if case .sessionTaskFailed(let underlyingError) = error,
-               let urlError = underlyingError as? URLError {
-                switch urlError.code {
-                case .notConnectedToInternet: throw NetworkError.notConnectedToInternet
-                case .cannotConnectToHost: throw NetworkError.connectionFailed
-                case .timedOut: throw NetworkError.connectionTimedOut
-                default: break
-                }
-            }
-
-            throw NetworkError.unknown
+            throw handleError(response: response, error: error, router: router)
         }
+    }
+    
+    private func handleError(response: AFDataResponse<Data>, error: AFError, router: URLRequestConvertible) -> Error {
+        if case .requestRetryFailed(retryError: let underlyingError, originalError: _) = error {
+            if case .unauthorized = underlyingError as? AppError {
+               return underlyingError
+            }
+        }
+
+        if let data = response.data,
+           let decoded = try? decoder.decode(FAILURE.self, from: data),
+           let baseRouter = router as? Router,
+           let mappedError = baseRouter.errorMap?.mapped(errorCode: decoded.error.code) {
+            return mappedError
+        }
+        
+        if case .sessionTaskFailed(let underlyingError) = error,
+           let urlError = underlyingError as? URLError {
+            switch urlError.code {
+            case .notConnectedToInternet: return NetworkError.notConnectedToInternet
+            case .cannotConnectToHost: return NetworkError.connectionFailed
+            case .timedOut: return NetworkError.connectionTimedOut
+            default: break
+            }
+        }
+
+        return NetworkError.unknown
     }
 }

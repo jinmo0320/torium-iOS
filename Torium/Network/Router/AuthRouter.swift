@@ -101,10 +101,7 @@ extension AuthRouter {
             return ErrorMapper {
                 ErrorCode.EMAIL_NOT_VERIFIED ~> SetPasswordError.emailNotVerified
             }
-        case .refreshToken:
-            return ErrorMapper {
-                ErrorCode.TOKEN_INVALID ~> AppError.unauthorized
-            }
+        default: return nil
         }
     }
 }

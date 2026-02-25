@@ -30,7 +30,7 @@ extension AuthClient: DependencyKey {
                     )
                 
                 _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
-                _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
+                _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.refreshToken)
 
                 return User(
                     id: dto.user.id,
@@ -68,7 +68,7 @@ extension AuthClient: DependencyKey {
                     )
                 
                 _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
-                _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
+                _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.refreshToken)
 
                 return User(
                     id: dto.user.id,

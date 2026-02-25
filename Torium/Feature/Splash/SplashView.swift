@@ -13,7 +13,7 @@ struct SplashView: View {
     var body: some View {
         ZStack {
             LoadingAnimationView(phase: $store.animation)
-                .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
+                .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 4)
         }
         .onAppear {
             store.send(.autoLogin)
