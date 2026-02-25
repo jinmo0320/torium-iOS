@@ -47,6 +47,10 @@ struct RootFeature {
                 state = .main(MainFlow.State())
                 return .none
                 
+            case .main(.delegate(.goSplash)):
+                state = .splash(SplashFeature.State())
+                return .none
+                
             default:
                 return .none
             }

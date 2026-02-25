@@ -32,27 +32,20 @@ final class Authenticator: RequestInterceptor {
             return
         }
         
-        completion(.doNotRetryWithError(AppError.unauthorized))
-        
-//        Task {
-//            do {
-//                print("hi")
-//
-//                guard let refreshToken = await KeyChainManager.shared.readToken(type: .refreshToken) else {
-//                    completion(.doNotRetry)
-//                    return
-//                }
-//
-//                let dto: TokenDTO = try await Network.shared.request(AuthRouter.refreshToken(refreshToken: refreshToken))
-//            
-//                _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
-//                _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.accessToken)
-//                
-//                completion(.retry)
-//            } catch(let err) {
-//                print("bye")
-//                completion(.doNotRetryWithError(err))
-//            }
-//        }
+        Task {
+            guard let refreshToken = await KeyChainManager.shared.readToken(type: .refreshToken) else {
+                completion(.doNotRetryWithError(AppError.unauthorized))
+                return
+            }
+            
+            do {
+                let dto: TokenDTO = try await Network.shared.request(AuthRouter.refreshToken(refreshToken: refreshToken))
+                _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
+                _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.refreshToken)
+                completion(.retry)
+            } catch {
+                completion(.doNotRetryWithError(AppError.unauthorized))
+            }
+        }
     }
 }
