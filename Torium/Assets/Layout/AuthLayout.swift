@@ -68,7 +68,7 @@ struct AuthLayout: View {
             //MARK: - footer button
             items[5]
                 .padding(.top, 10)
-                .padding(.bottom, 25)
+                .padding(.bottom, 30)
                 .padding(.horizontal, 20)
         }
         .background(Color.clear)

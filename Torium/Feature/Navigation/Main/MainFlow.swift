@@ -8,10 +8,6 @@ import ComposableArchitecture
 
 @Reducer
 struct MainFlow {
-    @Reducer
-    enum Path {
-    }
-
     @ObservableState
     struct State: Equatable {
         var main = MainFeature.State()
@@ -21,13 +17,11 @@ struct MainFlow {
     enum Action {
         case main(MainFeature.Action)
         case path(StackActionOf<Path>)
-        case goBack
         
+        case pop
+        
+        // Root View Action
         case delegate(RootFeature.NavigationDelegate)
-    }
-    
-    enum NavigationDelegate {
-        case goOut
     }
     
     var body: some Reducer<State, Action> {
@@ -37,18 +31,23 @@ struct MainFlow {
         
         Reduce { state, action in
             switch action {
-            case .goBack:
+            case .pop:
                 _ = state.path.popLast()
                 return .none
-            
+                
             case .main(.delegate(.goOut)):
                 return .send(.delegate(.goSplash))
-
-            case .path(let action):
-                switch action {
-                default:
-                    return .none
+                
+            case .main(.delegate(.goCreatePortfolio)):
+                state.path.append(.createPortfolio(CreatePortfolioFeature.State()))
+                return .none
+                
+            case .path(.element(id: _, action: let pathAction)):
+                if pathAction.isCreatePortfolioFlow {
+                    return MainFlow.reduceCreatePortfolioFlow(state: &state, action: pathAction)
                 }
+                
+                return .none
 
             default:
                 return .none
@@ -58,4 +57,3 @@ struct MainFlow {
     }
 
 }
-extension MainFlow.Path.State: Equatable {}

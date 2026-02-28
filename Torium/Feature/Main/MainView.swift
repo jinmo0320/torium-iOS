@@ -12,10 +12,15 @@ struct MainView: View {
     var store: StoreOf<MainFeature>
     
     var body: some View {
-        VStack {
+        VStack(spacing: 10) {
             Text("hello world")
+            
             Button("logout") {
                 store.send(.logoutTapped)
+            }
+            
+            Button("create portfolio") {
+                store.send(.createPortfolioTapped)
             }
         }
     }

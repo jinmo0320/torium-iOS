@@ -11,9 +11,19 @@ struct MainFlowView: View {
     @Bindable var store: StoreOf<MainFlow>
 
     var body: some View {
-        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            MainView(store: store.scope(state: \.main, action: \.main))
-        } destination: { storePath in
+        Group {
+            NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
+                MainView(store: store.scope(state: \.main, action: \.main))
+            } destination: { path in
+                switch path.case {
+                case .createPortfolio(let s):
+                    CreatePortfolioView(store: s)
+                case .createPortfolioInvestSurvey(let s):
+                    SurveyView()
+                    
+                default: EmptyView()
+                }
+            }
         }
     }
 }

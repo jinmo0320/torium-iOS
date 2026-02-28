@@ -18,7 +18,14 @@ struct MainFeature {
         case logoutTapped
         case logoutResponse(Void)
         
-        case delegate(MainFlow.NavigationDelegate)
+        case createPortfolioTapped
+        
+        case delegate(NavigationDelegate)
+    }
+    
+    enum NavigationDelegate {
+        case goOut
+        case goCreatePortfolio
     }
     
     @Dependency(\.authClient) var authClient
@@ -33,6 +40,9 @@ struct MainFeature {
                 
             case .logoutResponse:
                 return .send(.delegate(.goOut))
+                
+            case .createPortfolioTapped:
+                return .send(.delegate(.goCreatePortfolio))
                 
             default:
                 return .none
