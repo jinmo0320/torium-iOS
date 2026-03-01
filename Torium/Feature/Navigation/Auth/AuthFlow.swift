@@ -85,9 +85,7 @@ struct AuthFlow {
                 switch action {
                 // login -> register
                 case .element(id: _, action: .login(.delegate(.goRegister))):
-                    state.path.append(
-                        .registerEmail(RegisterEmailFeature.State())
-                    )
+                    state.path.append(.registerEmail(RegisterEmailFeature.State()))
                     return .none
                     
                 // login -> forgotPassword

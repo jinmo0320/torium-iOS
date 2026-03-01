@@ -20,9 +20,9 @@ struct AuthFlowView: View {
         ) { _ in
             NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
                 Color.clear
-            } destination: { storePath in
+            } destination: { path in
                 Group {
-                    switch storePath.case {
+                    switch path.case {
                     case .login(let s):
                         LoginView(store: s)
                     case .registerEmail(let s):

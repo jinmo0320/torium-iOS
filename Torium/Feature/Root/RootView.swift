@@ -16,12 +16,15 @@ struct RootView: View {
             switch store.state {
             case .splash:
                 SplashView(store: store.scope(state: \.splash, action: \.splash)!)
+                    .transition(.blurReplace)
                 
             case .auth:
                 AuthFlowView(store: store.scope(state: \.auth, action: \.auth)!)
+                    .transition(.blurReplace)
             
             case .main:
                 MainFlowView(store: store.scope(state: \.main, action: \.main)!)
+                    .transition(.blurReplace)
             }
         }
         .animation(.default, value: store.state)
