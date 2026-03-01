@@ -29,6 +29,11 @@ struct ProgressBarView: View {
                     .onChange(of: maxSize) {
                         width = maxSize.width * CGFloat(cur/max)
                     }
+                    .onChange(of: cur) {
+                        width = maxSize.width * CGFloat(cur/max)
+                    }
+                    .animation(.easeInOut, value: width)
+                
             }
 
             Text("\(Int(cur)) / \(Int(max))")

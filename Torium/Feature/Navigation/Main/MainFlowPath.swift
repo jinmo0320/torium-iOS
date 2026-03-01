@@ -12,6 +12,7 @@ extension MainFlow {
     enum Path {
         case createPortfolio(CreatePortfolioFeature)
         case createPortfolioInvestSurvey(SurveyFeature)
+        case createPortfolioInvestSurveyResult(SurveyResultFeature)
     }
 }
 extension MainFlow.Path.State: Equatable {}

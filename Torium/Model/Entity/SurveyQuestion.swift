@@ -5,7 +5,7 @@
 //  Created by 최진모 on 2/26/26.
 //
 
-nonisolated struct SurveyQuestion {
+nonisolated struct SurveyQuestion: Equatable {
     let title: String
     let answers: [String]
 }

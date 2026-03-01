@@ -22,6 +22,11 @@ extension MainFlow {
             state.path.append(.createPortfolioInvestSurvey(SurveyFeature.State()))
             return .none
             
+        // survey -> result
+        case .createPortfolioInvestSurvey(.delegate(.goResult(let score))):
+            state.path.append(.createPortfolioInvestSurveyResult(SurveyResultFeature.State(score: score)))
+            return .none
+            
         default:
             return .none
         }
@@ -33,14 +38,16 @@ extension MainFlow {
 extension MainFlow.Path.Action {
     var isCreatePortfolioFlow: Bool {
         switch self {
-        case .createPortfolio, .createPortfolioInvestSurvey:
+        case .createPortfolio, .createPortfolioInvestSurvey, .createPortfolioInvestSurveyResult:
             return true
+            
+        default: return false
         }
     }
     
     var isBack: Bool {
         switch self {
-        case .createPortfolio(.delegate(.goBack)):
+        case .createPortfolio(.delegate(.goBack)), .createPortfolioInvestSurvey(.delegate(.goOut)):
             return true
             
         default: return false

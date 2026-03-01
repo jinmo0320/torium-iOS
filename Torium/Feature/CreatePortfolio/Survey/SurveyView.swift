@@ -8,37 +8,63 @@ import ComposableArchitecture
 import SwiftUI
 
 struct SurveyView: View {
-
+    var store: StoreOf<SurveyFeature>
+        
     var body: some View {
         VStack(spacing: 0) {
-            Header("귀하의 투자 목적은 무엇입니까?")
-
-            ProgressBarView(cur: 3, max: 10)
-
-            VStack(spacing: 28) {
-                Question("apple is red", selected: false)
-                Question("apple is red", selected: true)
-                Question("apple is red", selected: false)
-                Question("apple is red", selected: false)
+            if store.isLoading {
                 Spacer()
-            }
-            .padding(.vertical, 40)
-            .padding(.horizontal, 28)
-
-            HStack(spacing: 10) {
-                SubmitButtonView(text: "이전", type: .secondary) {
-
+                ProgressView()
+                Spacer()
+            } else {
+                HStack {
+                    Text(store.currentQuestion?.title ?? "")
+                    Spacer()
                 }
-                SubmitButtonView(text: "다음", type: .primary) {
+                .font(.pretendard(.semibold, size: 20))
+                .foregroundStyle(Color.BlackInk)
+                .padding(.vertical, 22)
+                .padding(.horizontal, 24)
 
+                ProgressBarView(
+                    cur: Float(store.index + 1),
+                    max: 10
+                )
+
+                VStack(spacing: 28) {
+                    if let questions = store.currentQuestion {
+                        ForEach(questions.answers.indices, id: \.self) { i in
+                            Question(questions.answers[i], selected: i == store.seletedNum)
+                                .onTapGesture {
+                                    store.send(.select(i))
+                                }
+                        }
+                    }
+                
+                    Spacer()
                 }
+                .padding(.vertical, 40)
+                .padding(.horizontal, 28)
+
+                HStack(spacing: 10) {
+                    SubmitButtonView(text: "이전", type: store.index > 0 ? .secondary : .disabled) {
+                        store.send(.prevTapped)
+                    }
+                    
+                    SubmitButtonView(text: "다음", type: store.seletedNum != nil ? .primary : .disabled) {
+                        store.send(.nextTapped)
+                    }
+                }
+                .padding(.top, 10)
+                .padding(.bottom, 30)
+                .padding(.horizontal, 20)
             }
-            .padding(.top, 10)
-            .padding(.bottom, 30)
-            .padding(.horizontal, 20)
         }
-        .navbar(root: {})
+        .navbar(root: { store.send(.delegate(.goOut)) })
         .background(Color.Background)
+        .onAppear {
+            store.send(.loadSurvey)
+        }
     }
 
     @ViewBuilder
@@ -64,7 +90,7 @@ struct SurveyView: View {
             }
 
             Text(text)
-                .font(.pretendard(.medium, size: 20))
+                .font(.pretendard(.medium, size: 18))
                 .foregroundStyle(selected ? Color.Green : Color.BlackInk)
 
             Spacer()
