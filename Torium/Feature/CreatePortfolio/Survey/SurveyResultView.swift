@@ -63,7 +63,7 @@ struct SurveyResultView: View {
             Spacer()
             
             SubmitButtonView(text: "완료", type: .primary) {
-                print(store.score)
+                store.send(.nextTapped)
             }
             .padding(.top, 10)
             .padding(.bottom, 30)
