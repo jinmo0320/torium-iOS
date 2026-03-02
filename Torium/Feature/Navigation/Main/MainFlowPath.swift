@@ -16,3 +16,14 @@ extension MainFlow {
     }
 }
 extension MainFlow.Path.State: Equatable {}
+
+extension MainFlow.Path.State {
+    var pathAnimation: MainFlow.Animation {
+        switch self {
+        case .createPortfolioInvestSurvey:
+            return .up
+        
+        default: return .none
+        }
+    }
+}

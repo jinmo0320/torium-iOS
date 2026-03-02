@@ -8,7 +8,7 @@ import ComposableArchitecture
 import Foundation
 
 @Reducer
-struct SurveyFeature{
+struct SurveyFeature {
     @ObservableState
     struct State: Equatable {
         var isLoading: Bool = false
@@ -16,7 +16,7 @@ struct SurveyFeature{
         var questions: [SurveyQuestion] = []
         var index: Int = 0
         var seletedNum: Int? = nil
-        var answers: [Int] = []
+        var answers: [Int: Int] = [:]
         
         var currentQuestion: SurveyQuestion? {
             if !questions.isEmpty {
@@ -76,28 +76,27 @@ struct SurveyFeature{
                 return .none
             
             case .select(let num):
-                state.seletedNum = num
+                state.seletedNum = num + 1
                 return .none
                 
             case .nextTapped:
                 if let num = state.seletedNum {
-                    state.answers.append(num)
+                    state.answers[state.index] = num
                 }
                 
                 if state.index < state.questions.endIndex - 1 {
                     state.index += 1
-                    state.seletedNum = nil
+                    state.seletedNum = state.answers[state.index]
                     return .none
                 } else {
-                    return .send(.delegate(.goResult(state.answers.reduce(0, +) + 10)))
+                    let score = state.answers.values.reduce(0, +)
+                    return .send(.delegate(.goResult(score)))
                 }
                 
             case .prevTapped:
                 if state.index > state.questions.startIndex {
                     state.index -= 1
-                    if let num = state.answers.popLast() {
-                        state.seletedNum = num
-                    }
+                    state.seletedNum = state.answers[state.index]
                     return .none
                 } else {
                     return .none

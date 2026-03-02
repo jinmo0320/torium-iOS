@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		DA53339A2F02B5C200023392 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = DA5333992F02B5C200023392 /* ComposableArchitecture */; };
 		DA5333BA2F02D54200023392 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = DA5333B92F02D54200023392 /* Alamofire */; };
+		DA57120D2F55AC8900CDEFF9 /* SwiftUINavigationTransitions in Frameworks */ = {isa = PBXBuildFile; productRef = DA57120C2F55AC8900CDEFF9 /* SwiftUINavigationTransitions */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 			files = (
 				DA53339A2F02B5C200023392 /* ComposableArchitecture in Frameworks */,
 				DA5333BA2F02D54200023392 /* Alamofire in Frameworks */,
+				DA57120D2F55AC8900CDEFF9 /* SwiftUINavigationTransitions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				DA5333992F02B5C200023392 /* ComposableArchitecture */,
 				DA5333B92F02D54200023392 /* Alamofire */,
+				DA57120C2F55AC8900CDEFF9 /* SwiftUINavigationTransitions */,
 			);
 			productName = Torium;
 			productReference = DA5333642F02B4F600023392 /* Torium.app */;
@@ -119,6 +122,7 @@
 			packageReferences = (
 				DA5333982F02B5C200023392 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				DA5333B82F02D54200023392 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				DA57120B2F55AC8900CDEFF9 /* XCRemoteSwiftPackageReference "swiftui-navigation-transitions" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DA5333652F02B4F600023392 /* Products */;
@@ -380,6 +384,14 @@
 				minimumVersion = 5.11.0;
 			};
 		};
+		DA57120B2F55AC8900CDEFF9 /* XCRemoteSwiftPackageReference "swiftui-navigation-transitions" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/davdroman/swiftui-navigation-transitions";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.16.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -392,6 +404,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DA5333B82F02D54200023392 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		DA57120C2F55AC8900CDEFF9 /* SwiftUINavigationTransitions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DA57120B2F55AC8900CDEFF9 /* XCRemoteSwiftPackageReference "swiftui-navigation-transitions" */;
+			productName = SwiftUINavigationTransitions;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

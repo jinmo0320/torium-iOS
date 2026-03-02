@@ -11,21 +11,67 @@ struct CreatePortfolioView: View {
     var store: StoreOf<CreatePortfolioFeature>
     
     var body: some View {
-        VStack(spacing: 10) {
-            Text("create portfolio")
+        VStack(spacing: 0) {
+            Header("새 포트폴리오 만들기")
             
-            Button("1. 투자성향 조사") {
-                store.send(.InvestSurveyTapped)
+            VStack {
+                Button {
+                    store.send(.InvestSurveyTapped)
+                } label: {
+                    HStack(spacing: 16){
+                        Text("1")
+                            .font(.pretendard(.semibold, size: 32))
+                            .foregroundStyle(Color.BlackPlaceholder)
+                        Text("투자 성향 조사하기")
+                            .font(.pretendard(.semibold, size: 16))
+                            .foregroundStyle(Color.BlackPlaceholder)
+                        Spacer()
+                    }
+                    .padding(.vertical, 16)
+                    .padding(.horizontal, 22)
+                    .background(Color.BlackSoft)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                }
+                
+                Button {
+                    store.send(.InvestPlanTapped)
+                } label: {
+                    HStack(spacing: 16){
+                        Text("2")
+                            .font(.pretendard(.semibold, size: 32))
+                            .foregroundStyle(Color.BlackPlaceholder)
+                        Text("투자 계획 세우기")
+                            .font(.pretendard(.semibold, size: 16))
+                            .foregroundStyle(Color.BlackPlaceholder)
+                        Spacer()
+                    }
+                    .padding(.vertical, 16)
+                    .padding(.horizontal, 22)
+                    .background(Color.BlackSoft)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                }
+                
+                Button {
+                    store.send(.ChartSetupTapped)
+                } label: {
+                    HStack(spacing: 16){
+                        Text("3")
+                            .font(.pretendard(.semibold, size: 32))
+                            .foregroundStyle(Color.BlackPlaceholder)
+                        Text("포트폴리오 구성하기")
+                            .font(.pretendard(.semibold, size: 16))
+                            .foregroundStyle(Color.BlackPlaceholder)
+                        Spacer()
+                    }
+                    .padding(.vertical, 16)
+                    .padding(.horizontal, 22)
+                    .background(Color.BlackSoft)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                }
             }
-            
-            Button("2. 투자 계획 수립") {
-                store.send(.InvestPlanTapped)
-            }
-            
-            Button("3. 포트폴리오 구성") {
-                store.send(.ChartSetupTapped)
-            }
-            
+            .padding(.vertical, 10)
+            .padding(.horizontal, 12)
+
             Spacer()
         }
         .navbar(back: { store.send(.delegate(.goBack)) })
