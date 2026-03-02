@@ -12,16 +12,24 @@ struct MainFlow {
     struct State: Equatable {
         var main = MainFeature.State()
         var path = StackState<Path.State>()
+        
+        var animation: Animation = .none
     }
 
     enum Action {
         case main(MainFeature.Action)
         case path(StackActionOf<Path>)
         
+        case push(Path.State)
         case pop
         
         // Root View Action
         case delegate(RootFeature.NavigationDelegate)
+    }
+    
+    enum Animation {
+        case none
+        case up
     }
     
     var body: some Reducer<State, Action> {
@@ -31,16 +39,22 @@ struct MainFlow {
         
         Reduce { state, action in
             switch action {
+            case .push(let path):
+                state.animation = path.pathAnimation
+                state.path.append(path)
+                return .none
+                
             case .pop:
-                _ = state.path.popLast()
+                if let path = state.path.popLast() {
+                    state.animation = path.pathAnimation
+                }
                 return .none
                 
             case .main(.delegate(.goOut)):
                 return .send(.delegate(.goSplash))
                 
             case .main(.delegate(.goCreatePortfolio)):
-                state.path.append(.createPortfolio(CreatePortfolioFeature.State()))
-                return .none
+                return .send(.push(.createPortfolio(CreatePortfolioFeature.State())))
                 
             case .path(.element(id: _, action: let pathAction)):
                 if pathAction.isCreatePortfolioFlow {

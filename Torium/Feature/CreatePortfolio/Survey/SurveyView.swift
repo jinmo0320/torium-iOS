@@ -34,7 +34,7 @@ struct SurveyView: View {
                 VStack(spacing: 28) {
                     if let questions = store.currentQuestion {
                         ForEach(questions.answers.indices, id: \.self) { i in
-                            Question(questions.answers[i], selected: i == store.seletedNum)
+                            Question(questions.answers[i], selected: (i+1) == store.seletedNum)
                                 .onTapGesture {
                                     store.send(.select(i))
                                 }
@@ -63,7 +63,9 @@ struct SurveyView: View {
         .navbar(root: { store.send(.delegate(.goOut)) })
         .background(Color.Background)
         .onAppear {
-            store.send(.loadSurvey)
+            if store.questions.isEmpty {
+                store.send(.loadSurvey)
+            }
         }
     }
 

@@ -9,7 +9,7 @@ import ComposableArchitecture
 import SwiftUI
 
 struct SurveyResultView: View {
-    var store: StoreOf<SurveyResultFeature>
+    @Bindable var store: StoreOf<SurveyResultFeature>
 
     var body: some View {
         VStack(spacing: 0) {
@@ -22,7 +22,10 @@ struct SurveyResultView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: 130)
-                    .shadow(color: Color(hex: store.asset.color), radius: 50)
+                    .shadow(color: Color(hex: store.asset.color), radius: CGFloat(store.blur))
+                    .onAppear {
+                        store.send(.animateBlur, animation: .easeInOut(duration: 4).repeatForever())
+                    }
                 
                 VStack(spacing: 15){
                     Text(store.asset.name)
@@ -42,6 +45,9 @@ struct SurveyResultView: View {
                         Text("다른 유형 살펴보기")
                             .font(.pretendard(.regular, size: 12))
                             .foregroundStyle(Color.BlackPlaceholder)
+                            .onTapGesture {
+                                store.send(.presentSheet)
+                            }
                     }
                     .padding(.vertical, 15)
                     .padding(.horizontal, 25)
@@ -63,8 +69,53 @@ struct SurveyResultView: View {
             .padding(.bottom, 30)
             .padding(.horizontal, 20)
         }
-        .navbar(back: {}, root: {})
+        .navbar(
+            back: {
+                store.send(.delegate(.goBack))
+            },
+            root: {
+                store.send(.delegate(.goOut))
+            }
+        )
         .background(Color.Background)
+        .sheet(item: $store.scope(state: \.sheet, action: \.sheet)) { s in
+            SheetView(store: s)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+        }
+    }
+    
+    
+    struct SheetView: View {
+        let store: StoreOf<SurveyResultFeature.SheetFeature>
+        
+        var body: some View {
+            VStack(alignment: .leading, spacing: 20) {
+                ForEach(assets.indices, id: \.self) { i in
+                    HStack(spacing: 30) {
+                        Image(assets[i].image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 70)
+                            .shadow(color: Color(hex: assets[i].color), radius: 50)
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(assets[i].name)
+                                .font(.pretendard(.medium, size: 15))
+                                .foregroundStyle(Color.BlackInk)
+                            
+                            Text(assets[i].abstract)
+                                .font(.pretendard(.medium, size: 12))
+                                .foregroundStyle(Color.BlackSteel)
+                        }
+                    }
+                }
+                
+                Spacer()
+            }
+            .padding(.vertical, 35)
+            .padding(.horizontal, 30)
+        }
     }
 }
 
