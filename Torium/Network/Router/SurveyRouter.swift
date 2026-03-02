@@ -49,7 +49,7 @@ enum SurveyRouter: Router {
     }
 
     var requiresAuth: Bool {
-        return false
+        return true
     }
 }
 

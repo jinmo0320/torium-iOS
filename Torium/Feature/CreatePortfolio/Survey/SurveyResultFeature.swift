@@ -23,6 +23,7 @@ struct SurveyResultFeature {
 
     enum Action {
         case nextTapped
+        case nextResponse(Result<Void, Error>)
         case presentSheet
         
         case animateBlur
@@ -47,8 +48,23 @@ struct SurveyResultFeature {
             switch action {
                 
             case .nextTapped:
-                return .none
+                return .run { [score = state.score] send in
+                    await send(.nextResponse(Result{ try await surveyClient.submit(score) }))
+                }
+                
+            case .nextResponse(.success):
+                return .send(.delegate(.goOut))
             
+            case .nextResponse(.failure(let error)):
+                state.alert = AlertState {
+                    TextState("결과 전송 실패")
+                } actions: {
+                    ButtonState { TextState("확인") }
+                } message: {
+                    TextState(error.localizedDescription)
+                }
+                return .none
+
             case .presentSheet:
                 state.sheet = SheetFeature.State()
                 return .none
