@@ -8,8 +8,8 @@
 import ComposableArchitecture
 import SwiftUI
 
-struct SurveyResultView: View {
-    @Bindable var store: StoreOf<SurveyResultFeature>
+struct InvSurveyResultView: View {
+    @Bindable var store: StoreOf<InvSurveyResultFeature>
 
     var body: some View {
         VStack(spacing: 0) {
@@ -87,7 +87,7 @@ struct SurveyResultView: View {
     
     
     struct SheetView: View {
-        let store: StoreOf<SurveyResultFeature.SheetFeature>
+        let store: StoreOf<InvSurveyResultFeature.SheetFeature>
         
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
@@ -117,10 +117,4 @@ struct SurveyResultView: View {
             .padding(.horizontal, 30)
         }
     }
-}
-
-#Preview {
-    SurveyResultView(store: Store(initialState: SurveyResultFeature.State(score: 10)) {
-        SurveyResultFeature()
-    })
 }

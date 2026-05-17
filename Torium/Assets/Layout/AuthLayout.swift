@@ -7,7 +7,7 @@
 import SwiftUI
 
 @resultBuilder
-struct AuthLayoutBuilder {
+struct LayoutBuilder {
     static func buildBlock(_ components: [AnyView]...) -> [AnyView] {
         return components.flatMap { $0 }
     }
@@ -35,7 +35,7 @@ struct AuthLayoutBuilder {
 struct AuthLayout: View {
     let items: [AnyView]
     
-    init(@AuthLayoutBuilder items: @escaping () -> [AnyView]) {
+    init(@LayoutBuilder items: @escaping () -> [AnyView]) {
         self.items = items()
     }
     

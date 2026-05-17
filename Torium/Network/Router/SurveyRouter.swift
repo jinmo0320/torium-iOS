@@ -14,7 +14,7 @@ enum SurveyRouter: Router {
     case dump
     
     var baseURL: URL {
-        return URL(string: NetworkConfiguration.localURL)!
+        return URL(string: NetworkConfiguration.baseURL)!
     }
 
     var method: HTTPMethod {

@@ -9,7 +9,7 @@ import ComposableArchitecture
 import Foundation
 
 @Reducer
-struct SurveyResultFeature {
+struct InvSurveyResultFeature {
     @ObservableState
     struct State: Equatable {
         var isLoading: Bool = false
@@ -140,7 +140,7 @@ let assets: [Asset] = [
     )
 ]
 
-extension SurveyResultFeature.State {
+extension InvSurveyResultFeature.State {
     var asset: Asset {
         switch self.score {
         case 10 ..< 16:

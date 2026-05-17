@@ -56,6 +56,9 @@ struct InputFieldView<Content: View>: View {
 
                     Spacer()
                     
+                    inline()
+                        .underline(false)
+                    
                     if !isPwdVisible {
                         Button {
                             isPwdVisible = true
@@ -74,8 +77,6 @@ struct InputFieldView<Content: View>: View {
                         }
                     }
                     
-                    inline()
-                        .underline(false)
                 }
             } else {
                 HStack {
