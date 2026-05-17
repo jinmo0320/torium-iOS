@@ -11,8 +11,9 @@ extension MainFlow {
     @Reducer
     enum Path {
         case createPortfolio(CreatePortfolioFeature)
-        case createPortfolioInvestSurvey(SurveyFeature)
-        case createPortfolioInvestSurveyResult(SurveyResultFeature)
+        case createPortfolioInvestSurvey(InvSurveyFeature)
+        case createPortfolioInvestSurveyResult(InvSurveyResultFeature)
+        case createPortfolioInvsetPlan(InvPlanFeature)
     }
 }
 extension MainFlow.Path.State: Equatable {}
@@ -20,7 +21,7 @@ extension MainFlow.Path.State: Equatable {}
 extension MainFlow.Path.State {
     var pathAnimation: MainFlow.Animation {
         switch self {
-        case .createPortfolioInvestSurvey:
+        case .createPortfolioInvestSurvey, .createPortfolioInvsetPlan:
             return .up
         
         default: return .none

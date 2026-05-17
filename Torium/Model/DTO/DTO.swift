@@ -6,11 +6,6 @@
 //
 import Foundation
 
-nonisolated struct RESPONSE: Decodable {
-    let success: Bool
-    let message: String
-}
-
 nonisolated struct SUCCESS<T: Decodable>: Decodable {
     let data: T
 }

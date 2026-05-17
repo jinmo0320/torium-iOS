@@ -10,9 +10,12 @@ import ComposableArchitecture
 struct CreatePortfolioFeature{
     @ObservableState
     struct State: Equatable {
+        var isLoading: Bool = false
     }
 
     enum Action {
+        case load
+        
         case InvestSurveyTapped
         case InvestPlanTapped
         case ChartSetupTapped

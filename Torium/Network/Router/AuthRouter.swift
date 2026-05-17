@@ -18,7 +18,7 @@ enum AuthRouter: Router {
     case refreshToken(refreshToken: String)
 
     var baseURL: URL {
-        return URL(string: NetworkConfiguration.localURL)!
+        return URL(string: NetworkConfiguration.baseURL)!
     }
 
     var method: HTTPMethod {

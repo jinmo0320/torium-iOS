@@ -18,15 +18,15 @@ extension MainFlow {
 
         // create -> survey
         case .createPortfolio(.delegate(.goInvestSurvey)):
-            return .send(.push(.createPortfolioInvestSurvey(SurveyFeature.State())))
+            return .send(.push(.createPortfolioInvestSurvey(InvSurveyFeature.State())))
         
-        // survey -> out
-        case .createPortfolioInvestSurvey(.delegate(.goOut)):
-            return .send(.pop)
-
+        // create -> plan
+        case .createPortfolio(.InvestPlanTapped):
+            return .send(.push(.createPortfolioInvsetPlan(InvPlanFeature.State())))
+            
         // survey -> result
         case .createPortfolioInvestSurvey(.delegate(.goResult(let score))):
-            return .send(.push(.createPortfolioInvestSurveyResult(SurveyResultFeature.State(score: score))))
+            return .send(.push(.createPortfolioInvestSurveyResult(InvSurveyResultFeature.State(score: score))))
         
         // result -> out
         case .createPortfolioInvestSurveyResult(.delegate(.goOut)):
@@ -45,7 +45,8 @@ extension MainFlow.Path.Action {
         switch self {
         case .createPortfolio,
             .createPortfolioInvestSurvey,
-            .createPortfolioInvestSurveyResult:
+            .createPortfolioInvestSurveyResult,
+            .createPortfolioInvsetPlan:
             return true
 
         default: return false
@@ -55,7 +56,9 @@ extension MainFlow.Path.Action {
     var isBack: Bool {
         switch self {
         case .createPortfolio(.delegate(.goBack)),
-            .createPortfolioInvestSurveyResult(.delegate(.goBack)):
+            .createPortfolioInvestSurvey(.delegate(.goOut)),
+            .createPortfolioInvestSurveyResult(.delegate(.goBack)),
+            .createPortfolioInvsetPlan(.delegate(.goOut)):
             return true
 
         default: return false

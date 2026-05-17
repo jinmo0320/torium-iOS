@@ -8,7 +8,7 @@ import ComposableArchitecture
 import Foundation
 
 @Reducer
-struct SurveyFeature {
+struct InvSurveyFeature {
     @ObservableState
     struct State: Equatable {
         var isLoading: Bool = false

@@ -22,9 +22,11 @@ struct MainFlowView: View {
                     case .createPortfolio(let s):
                         CreatePortfolioView(store: s)
                     case .createPortfolioInvestSurvey(let s):
-                        SurveyView(store: s)
+                        InvSurveyView(store: s)
                     case .createPortfolioInvestSurveyResult(let s):
-                        SurveyResultView(store: s)
+                        InvSurveyResultView(store: s)
+                    case .createPortfolioInvsetPlan(let s):
+                        InvPlanView(store: s)
 
                     default: EmptyView()
                     }

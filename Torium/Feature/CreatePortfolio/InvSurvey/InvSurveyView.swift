@@ -7,8 +7,8 @@
 import ComposableArchitecture
 import SwiftUI
 
-struct SurveyView: View {
-    var store: StoreOf<SurveyFeature>
+struct InvSurveyView: View {
+    var store: StoreOf<InvSurveyFeature>
         
     var body: some View {
         VStack(spacing: 0) {
