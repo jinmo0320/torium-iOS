@@ -8,26 +8,16 @@ import Alamofire
 import Foundation
 
 enum AuthRouter: Router {
-    case login(email: String, password: String)
-    case sendEmail(email: String)
-    case verifyEmail(email: String, code: String)
-    case sendForgot(email: String)
-    case verifyForgot(email: String, code: String)
-    case register(email: String, password: String)
-    case resetPassword(email: String, newPassword: String)
-    case refreshToken(refreshToken: String)
+    case login(AuthDTO.REQ.Sign)
+    case sendEmail(AuthDTO.REQ.Email)
+    case verifyEmail(AuthDTO.REQ.Verify)
+    case sendForgot(AuthDTO.REQ.Email)
+    case verifyForgot(AuthDTO.REQ.Verify)
+    case register(AuthDTO.REQ.Sign)
+    case resetPassword(AuthDTO.REQ.ResetPassword)
+    case refreshToken(AuthDTO.REQ.Refresh)
 
-    var baseURL: URL {
-        return URL(string: NetworkConfiguration.baseURL)!
-    }
-
-    var method: HTTPMethod {
-        switch self {
-        case .register, .login, .resetPassword, .sendEmail, .verifyEmail,
-            .sendForgot, .verifyForgot, .refreshToken:
-            return .post
-        }
-    }
+    var method: HTTPMethod { .post }
 
     var path: String {
         switch self {
@@ -49,31 +39,29 @@ enum AuthRouter: Router {
             return "/auth/refresh"
         }
     }
-
-    var parameters: Parameters? {
+    
+    var body: (any Encodable)? {
         switch self {
-        case .login(let email, let password):
-            return ["email": email, "password": password]
-        case .sendEmail(let email):
-            return ["email": email]
-        case .verifyEmail(let email, let code):
-            return ["email": email, "code": code]
-        case .sendForgot(let email):
-            return ["email": email]
-        case .verifyForgot(let email, let code):
-            return ["email": email, "code": code]
-        case .register(let email, let password):
-            return ["email": email, "password": password]
-        case .resetPassword(let email, let newPassword):
-            return ["email": email, "newPassword": newPassword]
-        case .refreshToken(let token):
-            return ["refreshToken": token]
+        case .login(let req):
+            encoded(req)
+        case .register(let req):
+            encoded(req)
+        case .sendEmail(let req):
+            encoded(req)
+        case .sendForgot(let req):
+            encoded(req)
+        case .verifyEmail(let req):
+            encoded(req)
+        case .verifyForgot(let req):
+            encoded(req)
+        case .resetPassword(let req):
+            encoded(req)
+        case .refreshToken(let req):
+            encoded(req)
         }
     }
 
-    var requiresAuth: Bool {
-        return false
-    }
+    var requiresAuth: Bool { false }
 }
 
 extension AuthRouter {
@@ -87,19 +75,23 @@ extension AuthRouter {
             }
         case .sendEmail:
             return ErrorMapper {
-                ErrorCode.EMAIL_ALREADY_REGISTERED ~> RegisterEmailError.emailAlreadyRegistered
+                ErrorCode.EMAIL_ALREADY_REGISTERED
+                    ~> RegisterEmailError.emailAlreadyRegistered
             }
         case .sendForgot:
             return ErrorMapper {
-                ErrorCode.EMAIL_NOT_REGISTERED ~> ForgotEmailError.emailNotRegistered
+                ErrorCode.EMAIL_NOT_REGISTERED
+                    ~> ForgotEmailError.emailNotRegistered
             }
         case .verifyEmail, .verifyForgot:
             return ErrorMapper {
-                ErrorCode.EMAIL_VERIFICATION_FAILED ~> VerificationError.verificationFailed
+                ErrorCode.EMAIL_VERIFICATION_FAILED
+                    ~> VerificationError.verificationFailed
             }
         case .register, .resetPassword:
             return ErrorMapper {
-                ErrorCode.EMAIL_NOT_VERIFIED ~> SetPasswordError.emailNotVerified
+                ErrorCode.EMAIL_NOT_VERIFIED
+                    ~> SetPasswordError.emailNotVerified
             }
         default: return nil
         }

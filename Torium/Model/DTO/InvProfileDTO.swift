@@ -5,12 +5,12 @@
 //  Created by 최진모 on 3/8/26.
 //
 
-nonisolated struct InvProfileDTO {
-    nonisolated struct RiskType {
+struct InvProfileDTO {
+   struct RiskType {
         let riskType: String
     }
     
-    nonisolated struct Plan {
+    struct Plan {
         let plan: MTRF
         
         nonisolated struct MTRF {

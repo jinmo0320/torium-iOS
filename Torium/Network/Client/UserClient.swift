@@ -28,7 +28,7 @@ extension UserClient: DependencyKey {
             },
             
             changePassword: { oldPassword, newPassword in
-                let _: Empty = try await Network.shared.request(
+                try await Network.shared.request(
                     UserRouter.changePassword(
                         oldPassword: oldPassword,
                         newPassword: newPassword

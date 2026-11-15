@@ -21,11 +21,10 @@ final class Network {
         self.session = Session(eventMonitors: [NetworkLogger()])
     }
 
-    func request<T: Decodable>(_ router: URLRequestConvertible) async throws
-        -> T
+    func request<T: Decodable, R: Router>(_ router: R) async throws -> T
     {
         // Interceptor 설정
-        let interceptor = (router as? Router)?.requiresAuth == true ? Authenticator.shared : nil
+        let interceptor = router.requiresAuth ? Authenticator.shared : nil
         
         // Network 요청
         let response = await session.request(router, interceptor: interceptor)
@@ -48,11 +47,10 @@ final class Network {
         }
     }
     
-    func request(_ router: URLRequestConvertible) async throws
-        -> Void
+    func request<R: Router>(_ router: R) async throws -> Void
     {
         // Interceptor 설정
-        let interceptor = (router as? Router)?.requiresAuth == true ? Authenticator.shared : nil
+        let interceptor = router.requiresAuth ? Authenticator.shared : nil
 
         // Network 요청
         let response = await session.request(router, interceptor: interceptor)
@@ -70,7 +68,7 @@ final class Network {
         }
     }
     
-    private func handleError(response: AFDataResponse<Data>, error: AFError, router: URLRequestConvertible) -> Error {
+    private func handleError<R: Router>(response: AFDataResponse<Data>, error: AFError, router: R) -> Error {
         if case .requestRetryFailed(retryError: let underlyingError, originalError: _) = error {
             if case .unauthorized = underlyingError as? AppError {
                return underlyingError
@@ -79,8 +77,7 @@ final class Network {
 
         if let data = response.data,
            let decoded = try? decoder.decode(FAILURE.self, from: data),
-           let baseRouter = router as? Router,
-           let mappedError = baseRouter.errorMap?.mapped(errorCode: decoded.error.code) {
+           let mappedError = router.errorMap?.mapped(errorCode: decoded.error.code) {
             return mappedError
         }
         

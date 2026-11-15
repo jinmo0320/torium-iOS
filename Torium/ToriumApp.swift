@@ -10,6 +10,7 @@ import SwiftUI
 
 @main
 struct ToriumApp: App {
+    @MainActor
     static let store = Store(initialState: RootFeature.State()) {
         RootFeature()
     }

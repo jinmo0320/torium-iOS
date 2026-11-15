@@ -10,7 +10,7 @@ import ComposableArchitecture
 import Foundation
 
 struct AuthClient {
-    var login: @Sendable (String, String) async throws -> User
+    var login: @Sendable (AuthDTO.REQ.Sign) async throws -> User
     var logout: @Sendable () async -> Void
     var sendEmail: @Sendable (String) async throws -> Date
     var verifyEmail: @Sendable (String, String) async throws -> Void
@@ -23,14 +23,23 @@ struct AuthClient {
 extension AuthClient: DependencyKey {
     static var liveValue: Self {
         return Self(
-            login: { email, password in
-                let dto: AuthDTO = try await Network.shared
+            login: { req in
+                let dto: AuthDTO.Res.Success = try await Network.shared
                     .request(
-                        AuthRouter.login(email: email, password: password)
+                        AuthRouter.login(
+                            email: req.email,
+                            password: req.password
+                        )
                     )
-                
-                _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
-                _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.refreshToken)
+
+                KeyChainManager.shared.saveToken(
+                    type: .accessToken,
+                    token: dto.accessToken
+                )
+                KeyChainManager.shared.saveToken(
+                    type: .refreshToken,
+                    token: dto.refreshToken
+                )
 
                 return User(
                     id: dto.user.id,
@@ -39,10 +48,12 @@ extension AuthClient: DependencyKey {
                     email: dto.user.email
                 )
             },
-            
+
             logout: {
                 _ = await KeyChainManager.shared.deleteToken(type: .accessToken)
-                _ = await KeyChainManager.shared.deleteToken(type: .refreshToken)
+                _ = await KeyChainManager.shared.deleteToken(
+                    type: .refreshToken
+                )
             },
 
             sendEmail: { email in
@@ -66,9 +77,15 @@ extension AuthClient: DependencyKey {
                             password: password
                         )
                     )
-                
-                _ = await KeyChainManager.shared.saveToken(type: .accessToken, token: dto.accessToken)
-                _ = await KeyChainManager.shared.saveToken(type: .refreshToken, token: dto.refreshToken)
+
+                _ = await KeyChainManager.shared.saveToken(
+                    type: .accessToken,
+                    token: dto.accessToken
+                )
+                _ = await KeyChainManager.shared.saveToken(
+                    type: .refreshToken,
+                    token: dto.refreshToken
+                )
 
                 return User(
                     id: dto.user.id,

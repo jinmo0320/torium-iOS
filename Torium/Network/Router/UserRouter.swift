@@ -12,9 +12,6 @@ enum UserRouter: Router {
     case me
     case changePassword(oldPassword: String, newPassword: String)
 
-    var baseURL: URL {
-        return URL(string: NetworkConfiguration.baseURL)!
-    }
 
     var method: HTTPMethod {
         switch self {

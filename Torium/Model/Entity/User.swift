@@ -6,7 +6,7 @@
 //
 import Foundation
 
-nonisolated struct User {
+struct User {
     let id: UUID
     let name: String
     let tag: String

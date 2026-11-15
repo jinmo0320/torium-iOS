@@ -12,10 +12,6 @@ enum SurveyRouter: Router {
     case get
     case submit(score: Int)
     case dump
-    
-    var baseURL: URL {
-        return URL(string: NetworkConfiguration.baseURL)!
-    }
 
     var method: HTTPMethod {
         switch self {

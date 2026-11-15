@@ -6,11 +6,11 @@
 //
 import Foundation
 
-nonisolated struct SUCCESS<T: Decodable>: Decodable {
+struct SUCCESS<T: Decodable>: Decodable {
     let data: T
 }
 
-nonisolated struct FAILURE: Decodable {
+struct FAILURE: Decodable {
     let error: Content
     
     struct Content: Error, Decodable {
